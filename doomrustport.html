@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.1, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This one-page reference is for the Spacecraft Software project to port
+Doom 1, Doom II, and Ultimate Doom to memory-safe Rust
+(version 1.0, updated 2026-07-23).
+
+Copyright © 2026 Mohamed Hammad & Spacecraft Software.
+
+This document is licensed under the Creative Commons Attribution-ShareAlike
+4.0 International License (CC-BY-SA-4.0).  To view a copy of this licence,
+visit https://creativecommons.org/licenses/by-sa/4.0/. -->
+<title>Doom to Rust Porting Reference 1.0</title>
+
+<meta name="description" content="Doom to Rust Porting Reference 1.0">
+<meta name="keywords" content="Doom to Rust Porting Reference 1.0">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="#Top" rel="start" title="Top">
+<link href="#Index" rel="index" title="Index">
+<link href="#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="#Overview" rel="next" title="Overview">
+<style type="text/css">
+<!--
+/* SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+   SPDX-License-Identifier: GPL-3.0-or-later
+
+   Spacecraft Software HTML theme for texi2any output.
+   Apply with:  texi2any --html --no-split --css-include=spacecraft.css FILE.texi
+   Palette: Steelbore Standard §11.  Typography: §12 (Share Tech Mono / Inconsolata, both OFL).
+   Fonts load from Google Fonts; system monospace is the offline fallback. */
+
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+a.summary-letter-printindex {text-decoration: none}
+span:hover a.copiable-link {visibility: visible}
+td.printindex-index-entry {vertical-align: top}
+td.printindex-index-section {vertical-align: top; padding-left: 1em}
+th.entries-header-printindex {text-align:left}
+th.sections-header-printindex {text-align:left; padding-left: 1em}
+ul.mark-bullet {list-style-type: disc}
+ul.toc-numbered-mark {list-style: none}
+:root {
+  --void-navy:       #000027;  /* background / canvas        */
+  --molten-amber:    #D98E32;  /* body text / active readout */
+  --steel-blue:      #4B7EB0;  /* H1 / accent / visited link */
+  --radium-green:    #50FA7B;  /* H2 / success               */
+  --liquid-coolant:  #8BE9FD;  /* H3 / info / link           */
+  --red-oxide:       #FF5C5C;  /* warning / error            */
+}
+
+body {
+  background-color: var(--void-navy);
+  color: var(--molten-amber);
+  font-family: 'Inconsolata', monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 50rem;
+  padding: 2rem 1.5rem;
+}
+
+h1, h2, h3, h4, h5, h6,
+.settitle, .shortcontents-heading, .contents-heading {
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: normal;
+  line-height: 1.25;
+}
+
+h1, .titlefont, .settitle           { color: var(--steel-blue); }
+h2, .chapter, .unnumbered, .appendix { color: var(--steel-blue); }
+h3, .section                         { color: var(--radium-green); }
+h4, h5, h6, .subsection, .subsubsection { color: var(--liquid-coolant); }
+
+a:link    { color: var(--liquid-coolant); }
+a:visited { color: var(--steel-blue); }
+a:hover   { color: var(--radium-green); }
+
+code, samp, kbd, tt, pre, .verbatim,
+.example, .smallexample, .lisp {
+  font-family: 'Inconsolata', monospace;
+  color: var(--liquid-coolant);
+}
+
+pre.example, pre.verbatim, pre.smallexample, pre.lisp, pre.display {
+  background-color: rgba(75, 126, 176, 0.12);  /* steel-blue wash */
+  border-left: 3px solid var(--steel-blue);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+}
+
+blockquote, .quotation {
+  border-left: 3px solid var(--molten-amber);
+  margin-left: 0;
+  padding-left: 1rem;
+  color: var(--molten-amber);
+}
+
+table { border-collapse: collapse; }
+th, td { border: 1px solid var(--steel-blue); padding: 0.35rem 0.6rem; }
+th { color: var(--radium-green); font-family: 'Share Tech Mono', monospace; }
+
+/* Definition commands (@deffn etc.) */
+dt { color: var(--radium-green); }
+dfn, var { color: var(--molten-amber); font-style: italic; }
+
+hr { border: none; border-top: 1px solid var(--steel-blue); }
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+
+
+
+
+
+
+<div class="top-level-extent" id="Top">
+<div class="nav-panel">
+<p>
+Next: <a href="#Overview" accesskey="n" rel="next">Overview</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h1 class="top" id="Doom_002dto_002dRust-Porting-Reference"><span>Doom-to-Rust Porting Reference<a class="copiable-link" href="#Doom_002dto_002dRust-Porting-Reference"> &para;</a></span></h1>
+
+<p>This one-page reference is for the Spacecraft Software project to port
+Doom 1, Doom II, and Ultimate Doom to memory-safe Rust
+(version 1.0, updated 2026-07-23).
+</p>
+<p>Copyright &copy; 2026 Mohamed Hammad &amp; Spacecraft Software.
+</p>
+<blockquote class="quotation">
+<p>This document is licensed under the Creative Commons Attribution-ShareAlike
+4.0 International License (CC-BY-SA-4.0).  To view a copy of this licence,
+visit <a class="url" href="https://creativecommons.org/licenses/by-sa/4.0/">https://creativecommons.org/licenses/by-sa/4.0/</a>.
+</p></blockquote>
+
+
+<div class="element-contents" id="SEC_Contents">
+<h2 class="contents-heading">Table of Contents</h2>
+
+<div class="contents">
+
+<ul class="toc-numbered-mark">
+  <li><a id="toc-Overview-1" href="#Overview">1 Overview</a></li>
+  <li><a id="toc-Source-Material-1" href="#Source-Material">2 Source Material</a></li>
+  <li><a id="toc-Prior-Art-1" href="#Prior-Art">3 Prior Art</a></li>
+  <li><a id="toc-Porting-Strategies-1" href="#Porting-Strategies">4 Porting Strategies</a></li>
+  <li><a id="toc-Constraints-and-Ecosystem" href="#Constraints">5 Constraints and Ecosystem</a></li>
+  <li><a id="toc-Sources-1" href="#Sources">6 Sources</a></li>
+  <li><a id="toc-Index-1" href="#Index" rel="index">Index</a></li>
+</ul>
+</div>
+</div>
+<hr>
+<div class="chapter-level-extent" id="Overview">
+<div class="nav-panel">
+<p>
+Next: <a href="#Source-Material" accesskey="n" rel="next">Source Material</a>, Previous: <a href="#Top" accesskey="p" rel="prev">Doom-to-Rust Porting Reference</a>, Up: <a href="#Top" accesskey="u" rel="up">Doom-to-Rust Porting Reference</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Overview-1"><span>1 Overview<a class="copiable-link" href="#Overview-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-overview"></a>
+<a class="index-entry-id" id="index-id-Tech-1"></a>
+<p>A memory-safe Rust port of Doom 1, Doom II, and Ultimate Doom: one
+codebase, one WAD-selectable engine, no C left in the tree.  id Tech 1
+is the classic systems-porting benchmark &mdash; a tight, well-studied
+~55,000-line C engine (45k <samp class="file">.c</samp> + 9.5k headers in
+<code class="code">linuxdoom-1.10</code>) with a software renderer, fixed-point math,
+and a fully deterministic game loop &mdash; which makes it the ideal
+proving ground for Rust&rsquo;s safety guarantees under real-time
+constraints.  No existing Rust effort has shipped a complete,
+faithful port of all three IWADs; that gap is the opportunity.
+</p>
+<hr>
+</div>
+<div class="chapter-level-extent" id="Source-Material">
+<div class="nav-panel">
+<p>
+Next: <a href="#Prior-Art" accesskey="n" rel="next">Prior Art</a>, Previous: <a href="#Overview" accesskey="p" rel="prev">Overview</a>, Up: <a href="#Top" accesskey="u" rel="up">Doom-to-Rust Porting Reference</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Source-Material-1"><span>2 Source Material<a class="copiable-link" href="#Source-Material-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-source-release"></a>
+<a class="index-entry-id" id="index-GPL"></a>
+<a class="index-entry-id" id="index-linuxdoom"></a>
+<p>id Software released the Doom source on 1997-12-23 as
+<code class="code">linuxdoom-1.10</code> &mdash; the Linux port, because the DOS version&rsquo;s
+licensed DMX sound library could not be published; the sound code was
+replaced.  John Carmack authorized GPL relicensing on 1999-10-03, and
+GPL-2.0 was formally applied to the canonical
+<a class="uref" href="https://github.com/id-Software/DOOM">id-Software/DOOM</a>
+repository in January 2024.  Note that Bernd Kreimeier&rsquo;s pre-release
+cleanup introduced a few bugs (later fixed in Doom Classic), so
+vanilla-fidelity work should diff against known corrections.  Doom II
+and Ultimate Doom run on the same engine; supporting all three is a
+matter of IWAD detection, episode logic, and Doom II&rsquo;s cast/finale
+screens.
+</p>
+<hr>
+</div>
+<div class="chapter-level-extent" id="Prior-Art">
+<div class="nav-panel">
+<p>
+Next: <a href="#Porting-Strategies" accesskey="n" rel="next">Porting Strategies</a>, Previous: <a href="#Source-Material" accesskey="p" rel="prev">Source Material</a>, Up: <a href="#Top" accesskey="u" rel="up">Doom-to-Rust Porting Reference</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Prior-Art-1"><span>3 Prior Art<a class="copiable-link" href="#Prior-Art-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-prior-art"></a>
+<a class="index-entry-id" id="index-room4doom"></a>
+<a class="index-entry-id" id="index-iron_002ddoom"></a>
+<a class="index-entry-id" id="index-rust_002ddoom"></a>
+<p>Three Rust efforts define the landscape; none is complete.
+</p>
+<dl class="table">
+<dt><code class="code">room4doom</code></dt>
+<dd><p>(MIT) The furthest along: playable, demo-compatible with vanilla Doom,
+software renderer plus an optional 3D mode, OPL2 music emulation.
+Hand-transliterated from the C, organized as per-system crates.  Still
+missing the Doom II cast sequence, automap, and some audio effects;
+development is sporadic.
+</p>
+</dd>
+<dt><code class="code">iron-doom</code></dt>
+<dd><p>(GPL-3.0) A Chocolate-Doom-based rewrite on Bevy&rsquo;s ECS.  Early stage
+(~12 commits) and largely inactive &mdash; an architecture experiment, not
+a port.
+</p>
+</dd>
+<dt><code class="code">rust-doom</code></dt>
+<dd><p>(Apache-2.0, ~2.4k stars) cristicbz&rsquo;s renderer built from the
+Doom specs rather than the C source.  No gameplay; inactive.  Useful
+as a reference for idiomatic WAD/BSP handling in Rust.
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="chapter-level-extent" id="Porting-Strategies">
+<div class="nav-panel">
+<p>
+Next: <a href="#Constraints" accesskey="n" rel="next">Constraints and Ecosystem</a>, Previous: <a href="#Prior-Art" accesskey="p" rel="prev">Prior Art</a>, Up: <a href="#Top" accesskey="u" rel="up">Doom-to-Rust Porting Reference</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Porting-Strategies-1"><span>4 Porting Strategies<a class="copiable-link" href="#Porting-Strategies-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-porting-strategy"></a>
+<a class="index-entry-id" id="index-doomgeneric"></a>
+<a class="index-entry-id" id="index-c2rust"></a>
+<a class="index-entry-id" id="index-transliteration"></a>
+<dl class="table">
+<dt>1. Shim first, rewrite inward</dt>
+<dd><p><code class="code">doomgeneric</code> (GPL-2.0) reduces the platform surface to six
+functions: <code class="code">DG_Init</code>, <code class="code">DG_DrawFrame</code>, <code class="code">DG_SleepMs</code>,
+<code class="code">DG_GetTicksMs</code>, <code class="code">DG_GetKey</code>, <code class="code">DG_SetWindowTitle</code>.
+Wrap them in Rust, get a running game on day one, then replace C
+subsystems incrementally.  Fastest to playable; slowest to 100% Rust.
+</p>
+</dd>
+<dt>2. Mechanical transpile, then refactor</dt>
+<dd><p><code class="code">c2rust</code> emits working-but-<code class="code">unsafe</code> Rust from the C tree;
+the port then becomes a measurable campaign of driving the
+<code class="code">unsafe</code> count to zero, module by module.  Verifiable at every
+step, but the intermediate code is not idiomatic.
+</p>
+</dd>
+<dt>3. Manual transliteration</dt>
+<dd><p>The room4doom route: rewrite the C by hand, preserving game-logic
+structure (and thus demo compatibility) while making the renderer,
+I/O, and platform layers idiomatic Rust from the start.  Highest
+effort, cleanest result &mdash; and the one that showcases memory-safe
+design rather than inheriting C&rsquo;s shape.
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="chapter-level-extent" id="Constraints">
+<div class="nav-panel">
+<p>
+Next: <a href="#Sources" accesskey="n" rel="next">Sources</a>, Previous: <a href="#Porting-Strategies" accesskey="p" rel="prev">Porting Strategies</a>, Up: <a href="#Top" accesskey="u" rel="up">Doom-to-Rust Porting Reference</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Constraints-and-Ecosystem"><span>5 Constraints and Ecosystem<a class="copiable-link" href="#Constraints-and-Ecosystem"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-demo-compatibility"></a>
+<a class="index-entry-id" id="index-fixed_002dpoint"></a>
+<a class="index-entry-id" id="index-IWAD-licensing"></a>
+<a class="index-entry-id" id="index-crates"></a>
+<p>Determinism is the fidelity contract: demo playback requires bit-exact
+16.16 fixed-point arithmetic and the original 256-entry
+<code class="code">P_Random</code> table &mdash; no <code class="code">f32</code> in game logic.  The engine&rsquo;s
+pervasive global mutable state is the central Rust design problem;
+plan ownership boundaries (a top-level game-state struct passed by
+<code class="code">&amp;mut</code>, or per-system crates) before writing code.  Licensing:
+the GPL covers only the code &mdash; <samp class="file">DOOM.WAD</samp> and <samp class="file">DOOM2.WAD</samp>
+remain commercial, so develop and CI against Freedoom&rsquo;s free IWADs and
+the shareware <samp class="file">doom1.wad</samp>.  Ecosystem: <code class="code">winit</code> +
+<code class="code">pixels</code>/<code class="code">softbuffer</code> (or SDL2 bindings) for video,
+<code class="code">rodio</code>/<code class="code">cpal</code> for audio keep the stack memory-safe end to
+end.
+</p>
+<hr>
+</div>
+<div class="chapter-level-extent" id="Sources">
+<div class="nav-panel">
+<p>
+Next: <a href="#Index" accesskey="n" rel="next">Index</a>, Previous: <a href="#Constraints" accesskey="p" rel="prev">Constraints and Ecosystem</a>, Up: <a href="#Top" accesskey="u" rel="up">Doom-to-Rust Porting Reference</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Sources-1"><span>6 Sources<a class="copiable-link" href="#Sources-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-sources"></a>
+<ul class="itemize mark-bullet">
+<li>Doom source-code history &mdash;
+<a class="uref" href="https://doomwiki.org/wiki/Doom_source_code">DoomWiki</a> and
+<a class="uref" href="https://github.com/id-Software/DOOM">id-Software/DOOM</a>.
+</li><li><a class="uref" href="https://github.com/flukejones/room4doom">room4doom</a>,
+<a class="uref" href="https://github.com/Henrique194/iron-doom">iron-doom</a>,
+<a class="uref" href="https://github.com/cristicbz/rust-doom">cristicbz/rust-doom</a>.
+</li><li><a class="uref" href="https://github.com/ozkl/doomgeneric">doomgeneric</a> and
+<a class="uref" href="https://github.com/immunant/c2rust">c2rust</a>.
+</li><li><a class="uref" href="https://freedoom.github.io/">Freedoom</a> &mdash; free IWADs.
+</li></ul>
+
+<hr>
+</div>
+<div class="unnumbered-level-extent" id="Index">
+<div class="nav-panel">
+<p>
+Previous: <a href="#Sources" accesskey="p" rel="prev">Sources</a>, Up: <a href="#Top" accesskey="u" rel="up">Doom-to-Rust Porting Reference</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="unnumbered" id="Index-1"><span>Index<a class="copiable-link" href="#Index-1"> &para;</a></span></h2>
+
+<div class="printindex cp-printindex">
+<table class="cp-letters-header-printindex"><tr><th>Jump to: &nbsp; </th><td><a class="summary-letter-printindex" href="#Index_cp_letter-C"><b>C</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-D"><b>D</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-F"><b>F</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-G"><b>G</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-I"><b>I</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-L"><b>L</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-O"><b>O</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-P"><b>P</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-R"><b>R</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-S"><b>S</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-T"><b>T</b></a>
+ &nbsp; 
+</td></tr></table>
+<table class="cp-entries-printindex" border="0">
+<tr><td></td><th class="entries-header-printindex">Index Entry</th><th class="sections-header-printindex">Section</th></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-C">C</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-c2rust">c2rust</a></td><td class="printindex-index-section"><a href="#Porting-Strategies">Porting Strategies</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-crates">crates</a></td><td class="printindex-index-section"><a href="#Constraints">Constraints</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-D">D</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-demo-compatibility">demo compatibility</a></td><td class="printindex-index-section"><a href="#Constraints">Constraints</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-doomgeneric">doomgeneric</a></td><td class="printindex-index-section"><a href="#Porting-Strategies">Porting Strategies</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-F">F</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-fixed_002dpoint">fixed-point</a></td><td class="printindex-index-section"><a href="#Constraints">Constraints</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-G">G</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-GPL">GPL</a></td><td class="printindex-index-section"><a href="#Source-Material">Source Material</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-I">I</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-id-Tech-1">id Tech 1</a></td><td class="printindex-index-section"><a href="#Overview">Overview</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-iron_002ddoom">iron-doom</a></td><td class="printindex-index-section"><a href="#Prior-Art">Prior Art</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-IWAD-licensing">IWAD licensing</a></td><td class="printindex-index-section"><a href="#Constraints">Constraints</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-L">L</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-linuxdoom">linuxdoom</a></td><td class="printindex-index-section"><a href="#Source-Material">Source Material</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-O">O</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-overview">overview</a></td><td class="printindex-index-section"><a href="#Overview">Overview</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-P">P</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-porting-strategy">porting strategy</a></td><td class="printindex-index-section"><a href="#Porting-Strategies">Porting Strategies</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-prior-art">prior art</a></td><td class="printindex-index-section"><a href="#Prior-Art">Prior Art</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-R">R</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-room4doom">room4doom</a></td><td class="printindex-index-section"><a href="#Prior-Art">Prior Art</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-rust_002ddoom">rust-doom</a></td><td class="printindex-index-section"><a href="#Prior-Art">Prior Art</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-S">S</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-source-release">source release</a></td><td class="printindex-index-section"><a href="#Source-Material">Source Material</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-sources">sources</a></td><td class="printindex-index-section"><a href="#Sources">Sources</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-T">T</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-transliteration">transliteration</a></td><td class="printindex-index-section"><a href="#Porting-Strategies">Porting Strategies</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+</table>
+<table class="cp-letters-footer-printindex"><tr><th>Jump to: &nbsp; </th><td><a class="summary-letter-printindex" href="#Index_cp_letter-C"><b>C</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-D"><b>D</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-F"><b>F</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-G"><b>G</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-I"><b>I</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-L"><b>L</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-O"><b>O</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-P"><b>P</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-R"><b>R</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-S"><b>S</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-T"><b>T</b></a>
+ &nbsp; 
+</td></tr></table>
+</div>
+
+</div>
+</div>
+
+
+
+</body>
+</html>

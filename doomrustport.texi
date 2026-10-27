@@ -1,0 +1,208 @@
+\input texinfo   @c -*- texinfo -*-
+@c SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+@c SPDX-License-Identifier: CC-BY-SA-4.0
+@c
+@c One-pager reference: porting Doom 1 / Doom II / Ultimate Doom to Rust.
+@c Builds clean with:  makeinfo --no-split doom-rust-port.texi
+@c %**start of header
+@setfilename doom-rust-port.info
+@documentencoding UTF-8
+@documentlanguage en
+@settitle Doom to Rust Porting Reference 1.0
+@c %**end of header
+
+@set PROJECT Doom-to-Rust Porting Reference
+@set VERSION 1.0
+@set UPDATED 2026-07-23
+@set SUBDOMAIN https://SpacecraftSoftware.org/
+
+@copying
+This one-page reference is for the Spacecraft Software project to port
+Doom 1, Doom II, and Ultimate Doom to memory-safe Rust
+(version @value{VERSION}, updated @value{UPDATED}).
+
+Copyright @copyright{} 2026 Mohamed Hammad & Spacecraft Software.
+
+@quotation
+This document is licensed under the Creative Commons Attribution-ShareAlike
+4.0 International License (CC-BY-SA-4.0).  To view a copy of this licence,
+visit @url{https://creativecommons.org/licenses/by-sa/4.0/}.
+@end quotation
+@end copying
+
+@dircategory Spacecraft Software
+@direntry
+* Doom-to-Rust: (doom-rust-port).   Reference for porting Doom 1/2/Ultimate to Rust.
+@end direntry
+
+@titlepage
+@title Doom @arrow{} Rust
+@subtitle Porting Doom 1, Doom II, and Ultimate Doom to memory-safe Rust
+@subtitle Reference @value{VERSION} --- @value{UPDATED}
+@author Mohamed Hammad
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+
+Maintained by Mohamed Hammad
+@email{Mohamed.Hammad@@SpacecraftSoftware.org}.
+@*
+@uref{@value{SUBDOMAIN}}
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top Doom-to-Rust Porting Reference
+
+@insertcopying
+@end ifnottex
+
+@menu
+* Overview::             What this project is and why.
+* Source Material::      Provenance and licensing of the Doom source.
+* Prior Art::            Existing Rust ports and how far they got.
+* Porting Strategies::   Three viable routes and their trade-offs.
+* Constraints::          Determinism, global state, data licensing, crates.
+* Sources::              Primary references.
+* Index::               Complete index.
+@end menu
+
+@node Overview
+@chapter Overview
+
+@cindex overview
+@cindex id Tech 1
+A memory-safe Rust port of Doom 1, Doom II, and Ultimate Doom: one
+codebase, one WAD-selectable engine, no C left in the tree.  id Tech 1
+is the classic systems-porting benchmark --- a tight, well-studied
+~55,000-line C engine (45k @file{.c} + 9.5k headers in
+@code{linuxdoom-1.10}) with a software renderer, fixed-point math,
+and a fully deterministic game loop --- which makes it the ideal
+proving ground for Rust's safety guarantees under real-time
+constraints.  No existing Rust effort has shipped a complete,
+faithful port of all three IWADs; that gap is the opportunity.
+
+@node Source Material
+@chapter Source Material
+
+@cindex source release
+@cindex GPL
+@cindex linuxdoom
+id Software released the Doom source on 1997-12-23 as
+@code{linuxdoom-1.10} --- the Linux port, because the DOS version's
+licensed DMX sound library could not be published; the sound code was
+replaced.  John Carmack authorized GPL relicensing on 1999-10-03, and
+GPL-2.0 was formally applied to the canonical
+@uref{https://github.com/id-Software/DOOM, id-Software/DOOM}
+repository in January 2024.  Note that Bernd Kreimeier's pre-release
+cleanup introduced a few bugs (later fixed in Doom Classic), so
+vanilla-fidelity work should diff against known corrections.  Doom II
+and Ultimate Doom run on the same engine; supporting all three is a
+matter of IWAD detection, episode logic, and Doom II's cast/finale
+screens.
+
+@node Prior Art
+@chapter Prior Art
+
+@cindex prior art
+@cindex room4doom
+@cindex iron-doom
+@cindex rust-doom
+Three Rust efforts define the landscape; none is complete.
+
+@table @code
+@item room4doom
+(MIT) The furthest along: playable, demo-compatible with vanilla Doom,
+software renderer plus an optional 3D mode, OPL2 music emulation.
+Hand-transliterated from the C, organized as per-system crates.  Still
+missing the Doom II cast sequence, automap, and some audio effects;
+development is sporadic.
+
+@item iron-doom
+(GPL-3.0) A Chocolate-Doom-based rewrite on Bevy's ECS.  Early stage
+(~12 commits) and largely inactive --- an architecture experiment, not
+a port.
+
+@item rust-doom
+(Apache-2.0, ~2.4k stars) cristicbz's renderer built from the
+Doom specs rather than the C source.  No gameplay; inactive.  Useful
+as a reference for idiomatic WAD/BSP handling in Rust.
+@end table
+
+@node Porting Strategies
+@chapter Porting Strategies
+
+@cindex porting strategy
+@cindex doomgeneric
+@cindex c2rust
+@cindex transliteration
+@table @asis
+@item 1. Shim first, rewrite inward
+@code{doomgeneric} (GPL-2.0) reduces the platform surface to six
+functions: @code{DG_Init}, @code{DG_DrawFrame}, @code{DG_SleepMs},
+@code{DG_GetTicksMs}, @code{DG_GetKey}, @code{DG_SetWindowTitle}.
+Wrap them in Rust, get a running game on day one, then replace C
+subsystems incrementally.  Fastest to playable; slowest to 100% Rust.
+
+@item 2. Mechanical transpile, then refactor
+@code{c2rust} emits working-but-@code{unsafe} Rust from the C tree;
+the port then becomes a measurable campaign of driving the
+@code{unsafe} count to zero, module by module.  Verifiable at every
+step, but the intermediate code is not idiomatic.
+
+@item 3. Manual transliteration
+The room4doom route: rewrite the C by hand, preserving game-logic
+structure (and thus demo compatibility) while making the renderer,
+I/O, and platform layers idiomatic Rust from the start.  Highest
+effort, cleanest result --- and the one that showcases memory-safe
+design rather than inheriting C's shape.
+@end table
+
+@node Constraints
+@chapter Constraints and Ecosystem
+
+@cindex demo compatibility
+@cindex fixed-point
+@cindex IWAD licensing
+@cindex crates
+Determinism is the fidelity contract: demo playback requires bit-exact
+16.16 fixed-point arithmetic and the original 256-entry
+@code{P_Random} table --- no @code{f32} in game logic.  The engine's
+pervasive global mutable state is the central Rust design problem;
+plan ownership boundaries (a top-level game-state struct passed by
+@code{&mut}, or per-system crates) before writing code.  Licensing:
+the GPL covers only the code --- @file{DOOM.WAD} and @file{DOOM2.WAD}
+remain commercial, so develop and CI against Freedoom's free IWADs and
+the shareware @file{doom1.wad}.  Ecosystem: @code{winit} +
+@code{pixels}/@code{softbuffer} (or SDL2 bindings) for video,
+@code{rodio}/@code{cpal} for audio keep the stack memory-safe end to
+end.
+
+@node Sources
+@chapter Sources
+
+@cindex sources
+@itemize @bullet
+@item
+Doom source-code history ---
+@uref{https://doomwiki.org/wiki/Doom_source_code, DoomWiki} and
+@uref{https://github.com/id-Software/DOOM, id-Software/DOOM}.
+@item
+@uref{https://github.com/flukejones/room4doom, room4doom},
+@uref{https://github.com/Henrique194/iron-doom, iron-doom},
+@uref{https://github.com/cristicbz/rust-doom, cristicbz/rust-doom}.
+@item
+@uref{https://github.com/ozkl/doomgeneric, doomgeneric} and
+@uref{https://github.com/immunant/c2rust, c2rust}.
+@item
+@uref{https://freedoom.github.io/, Freedoom} --- free IWADs.
+@end itemize
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@bye

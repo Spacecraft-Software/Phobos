@@ -1,0 +1,1194 @@
+\input texinfo   @c -*- texinfo -*-
+@c SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+@c SPDX-License-Identifier: CC-BY-SA-4.0
+@c
+@c Product Requirements Document for Phobos, the Rust port of Doom,
+@c The Ultimate Doom, Doom II and Final Doom.  Texinfo rendering of PRD.md;
+@c PRD.md remains the Standard section 17.5 tracking document (ticked items).
+@c Builds clean with:  makeinfo --no-split phobos-prd.texi
+@c %**start of header
+@setfilename phobos-prd.info
+@documentencoding UTF-8
+@documentlanguage en
+@settitle Phobos Product Requirements 1.0
+@c %**end of header
+
+@set PROJECT Phobos
+@set VERSION 1.0
+@set UPDATED 2026-10-27
+@set SUBDOMAIN https://Phobos.SpacecraftSoftware.org/
+
+@copying
+This is the Product Requirements Document for @value{PROJECT}, the
+Spacecraft Software port of @cite{Doom}, @cite{The Ultimate Doom},
+@cite{Doom II} and @cite{Final Doom} to memory-safe Rust (document
+version @value{VERSION}, updated @value{UPDATED}).
+
+Copyright @copyright{} 2026 Mohamed Hammad & Spacecraft Software.
+
+@quotation
+This document is licensed under the Creative Commons Attribution-ShareAlike
+4.0 International License (CC-BY-SA-4.0).  To view a copy of this licence,
+visit @url{https://creativecommons.org/licenses/by-sa/4.0/}.
+@end quotation
+@end copying
+
+@dircategory Spacecraft Software
+@direntry
+* Phobos PRD: (phobos-prd).     Requirements for the Phobos id Tech 1 port.
+@end direntry
+
+@titlepage
+@title Phobos
+@subtitle Product Requirements Document
+@subtitle A memory-safe Rust port of Doom, Doom II and Final Doom
+@subtitle Version @value{VERSION} --- @value{UPDATED}
+@author Mohamed Hammad
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+
+Maintained by Mohamed Hammad
+@email{Mohamed.Hammad@@SpacecraftSoftware.org}.
+@*
+@uref{@value{SUBDOMAIN}}
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top Phobos Product Requirements
+
+@insertcopying
+@end ifnottex
+
+@menu
+* Overview::             What Phobos is, and the document's key facts.
+* Sources and Changes::  Earlier work merged here, and what changed.
+* Needs::                Who the port is for.
+* Target Games::         IWADs, game modes, and per-game content.
+* Goals::                Goals and non-goals.
+* Principles::           Rules that decide trade-offs.
+* Architecture::         Porting route, crates, state, concurrency.
+* Interfaces::           Command line, configuration, data formats.
+* Verification::         Fidelity evidence and performance targets.
+* Compliance::           How each Standard clause is met.
+* Milestones::           M0 to M8 and their requirement items.
+* Risks::                Risks and mitigations.
+* Open Questions::       Decisions still to make.
+* References::           Primary sources.
+* Index::                Complete index.
+@end menu
+
+@c ====================================================================
+@node Overview
+@chapter Overview
+
+@cindex overview
+@cindex id Tech 1
+@value{PROJECT} is one Rust codebase, with no C in the tree.  It plays
+every commercial id Tech 1 IWAD from @cite{Doom} to @cite{Final Doom}
+and the free Freedoom IWADs.  The engine picks its game mode from the
+IWAD it loads.  Fidelity is the product.  Vanilla demos shall play back
+in sync and level statistics shall match Chocolate Doom, the reference
+vanilla port.  This keeps the port honest: a behavioural difference
+shows up as a failed test, not as a forum report.
+
+The game logic is transliterated by hand from the GPL source release.
+The platform, I/O, audio, and presentation layers are written as
+idiomatic Rust from the start.  A software renderer, ported from the
+original @file{r_*.c}, is the reference for how the game looks.  A
+wgpu renderer with optional enhancements comes later and is checked
+against that reference.  It never replaces it.
+
+@cindex MVP
+@multitable @columnfractions .28 .72
+@headitem Field @tab Value
+@item Document @tab Product Requirements Document, version @value{VERSION}
+@item Date @tab @value{UPDATED}
+@item Status @tab Draft, awaiting maintainer review
+@item Codename @tab @strong{Phobos}, approved 2026-10-27.  Working
+directory @file{phobos/}; repository @code{Spacecraft-Software/Phobos}
+@item MVP @tab M0--M5 --- Phobos v0.1
+@item Class @tab Game (Standard §18.5); exempt from §18 and §10
+@item Assurance category @tab D --- Incidental (Standard §19.1: games)
+@item Posture @tab Personal / Hobby (Standard §5.1)
+@item Engine licence @tab @code{GPL-3.0-or-later}; inherited id Software
+code @code{GPL-2.0-or-later} (§4.2)
+@item Document licence @tab @code{CC-BY-SA-4.0} (Standard §4.1.1)
+@item Governing standard @tab The Steelbore Standard v2.14
+@item Tracking document @tab @file{PRD.md} (Standard §17.5); this
+manual mirrors its scope, and ticks are kept there
+@end multitable
+
+@cindex trademark
+@quotation Trademark
+@cite{Doom} is a trademark of id Software / ZeniMax Media.  Phobos is
+an independent engine that reads Doom data files.  It ships no id
+Software assets and no id Software logos, and claims no endorsement.
+@end quotation
+
+@c ====================================================================
+@node Sources and Changes
+@chapter Sources and Changes
+
+@cindex sources
+@cindex RustDoom
+This PRD merges two earlier documents and settles the questions they
+left open.
+
+@table @asis
+@item @file{RustDoom.html} --- @cite{RustDoom} PRD v1.0, 2026-07-23
+Functional requirement areas, the crate split, the determinism
+principles, the two renderer modes, test and fuzz strategy, risks,
+command-line surface.
+
+@item @file{doomrustport.texi} --- @cite{Doom-to-Rust Porting Reference} v1.0, 2026-07-23
+Source history and licence, prior art (room4doom, iron-doom,
+rust-doom), the three porting strategies, the determinism contract
+(16.16 fixed point, @code{P_Random} table, no @code{f32} in game
+logic), Freedoom-based CI, crate stack.
+@end table
+
+@multitable @columnfractions .14 .22 .28 .36
+@headitem Topic @tab RustDoom PRD said @tab This PRD decides @tab Why
+@item Scope
+@tab Doom 1 only; Doom II a non-goal
+@tab Doom, Ultimate Doom, Doom II, TNT, Plutonia
+@tab The engine is shared.  The extra work is game-mode logic, Doom II
+actors, finales, and the cast call.
+@item Name
+@tab ``RustDoom'' (working title)
+@tab Codename Phobos (approved 2026-10-27)
+@tab §2 needs an aerospace or astronomy codename.  A trademark should
+not appear in the product name.
+@item Licence
+@tab Open question: GPL-2.0+ or Apache/MIT
+@tab @code{GPL-3.0-or-later}, inheriting @code{GPL-2.0-or-later}
+@tab The port derives from the GPL source (§4.1, §4.2).  ``Or later''
+makes GPL-3.0 compatible.  R-008 checks the grant.
+@item Porting route
+@tab Not chosen
+@tab Manual transliteration
+@tab Keeps game-logic structure for demo sync, and shows memory-safe
+design instead of copying C's shape.
+@item Reference renderer
+@tab GPU ``Classic Accuracy Mode''
+@tab Ported software renderer; GPU renderer after MVP
+@tab Bit-faithful output and headless golden frames are cheap in
+software.  GPU rasterisation cannot reproduce vanilla column and
+visplane behaviour exactly.
+@item Shaders
+@tab Rust GPU preferred, WGSL fallback
+@tab WGSL primary; Rust GPU optional
+@tab Rust GPU needs a nightly toolchain, which conflicts with a pinned
+stable toolchain (§24, §3.1).
+@item Telemetry
+@tab Opt-in
+@tab None at all
+@tab §9: no tracking, no network.
+@item Platforms
+@tab Windows, Linux, macOS required
+@tab Linux required; macOS and Windows optional (OQ-2)
+@tab Personal posture; Steelbore OS is the home platform.
+@item Music
+@tab MUS to MIDI with SoundFont
+@tab OPL emulation from @code{GENMIDI}; SoundFont optional
+@tab This is how vanilla sounds; room4doom showed it is practical.
+@item Fidelity oracle
+@tab Internal golden demos
+@tab Chocolate Doom @code{-statdump} runs plus internal checksums
+@tab An outside reference catches mistakes that self-recorded goldens
+copy forward.
+@end multitable
+
+@c ====================================================================
+@node Needs
+@chapter Needs
+
+@cindex needs
+@emph{Players and preservationists} want to play the classic id Tech 1
+games on current Linux systems with vanilla behaviour: the same
+physics, the same monster behaviour, the same random sequence, so that
+historic demos play back and speedrun records stay checkable.  They
+supply their own IWADs and expect the engine to find them, play every
+map, and never crash on a malformed PWAD.
+
+@emph{The maintainer} wants a complete id Tech 1 port in safe Rust, as
+a showcase.  The simulation shall have no @code{unsafe}, and every
+claim of fidelity shall be backed by a test anyone can rerun.  No
+existing Rust effort has shipped all of @cite{Doom} through
+@cite{Final Doom}.  room4doom comes closest and still lacks the cast
+call and the automap.
+
+@c ====================================================================
+@node Target Games
+@chapter Target Games
+
+@cindex IWAD
+@cindex game mode
+@cindex Freedoom
+@multitable @columnfractions .19 .14 .13 .16 .14 .24
+@headitem IWAD @tab Mode @tab Mission @tab Maps @tab Version @tab In CI
+@item @file{doom1.wad} @tab shareware @tab doom @tab E1M1--E1M9
+@tab 1.9 @tab Yes (shareware)
+@item @file{doom.wad} (registered) @tab registered @tab doom @tab E1--E3
+@tab 1.9 @tab No, local only
+@item @file{doom.wad} (Ultimate) @tab retail @tab doom @tab E1--E4
+@tab ultimate @tab No, local only
+@item @file{doom2.wad} @tab commercial @tab doom2 @tab MAP01--MAP32
+@tab 1.9 @tab No, local only
+@item @file{tnt.wad} @tab commercial @tab pack_tnt @tab MAP01--MAP32
+@tab final @tab No, local only
+@item @file{plutonia.wad} @tab commercial @tab pack_plut @tab MAP01--MAP32
+@tab final @tab No, local only
+@item @file{freedoom1.wad} @tab retail @tab doom @tab E1--E4
+@tab ultimate @tab Yes
+@item @file{freedoom2.wad} @tab commercial @tab doom2 @tab MAP01--MAP32
+@tab 1.9 @tab Yes
+@end multitable
+
+@cindex game version
+The game version can be changed with @code{-gameversion} (values
+@code{1.9}, @code{ultimate}, @code{final}, @code{final2}, as in
+Chocolate Doom).  This covers behaviour that changed between
+executables.  One example is how teleports set a thing's height in the
+@cite{Final Doom} executable.  Another is the @cite{Ultimate Doom}
+change to Lost Soul bounce.
+
+@menu
+* Per-game Content::     What each game adds beyond the shared engine.
+@end menu
+
+@node Per-game Content
+@section Per-game Content
+
+@table @asis
+@item @cite{Doom} / @cite{The Ultimate Doom}
+Episode select, animated intermission maps (@file{wi_stuff}), episode
+end texts, E3 bunny scroller, E4 ending, sky per episode, boss triggers
+on E1M8 (tag 666), E2M8, E3M8, E4M6, E4M8.
+
+@item @cite{Doom II}
+Super shotgun; eight extra monsters, including the Arch-vile, Pain
+Elemental, and Icon of Sin; MAP07 tags 666/667; MAP30 boss brain
+spawner; secret exits to MAP31 and MAP32; between-map text screens;
+cast call; sky per map range.
+
+@item @cite{Final Doom}
+Doom II engine with mission-specific level names (HUD, automap),
+finale texts, and the @code{final} / @code{final2} executable
+behaviour.
+@end table
+
+@c ====================================================================
+@node Goals
+@chapter Goals and Non-goals
+
+@cindex goals
+@multitable @columnfractions .1 .9
+@headitem ID @tab Goal
+@item G1 @tab Play every map of the eight target IWADs from start to finish.
+@item G2 @tab Vanilla demos play back in sync; statistics match Chocolate Doom.
+@item G3 @tab Safe Rust throughout; @code{unsafe} forbidden in simulation crates.
+@item G4 @tab Untrusted WAD, demo, and save input can never crash or
+corrupt the engine.
+@item G5 @tab Simulation runs headless with no window, GPU, or audio dependency.
+@item G6 @tab Ships through Guix, Nix, and Arch packaging with a Texinfo manual.
+@item G7 @tab Optional modern GPU renderer that never changes gameplay.
+@end multitable
+
+@cindex non-goals
+@multitable @columnfractions .1 .4 .5
+@headitem ID @tab Non-goal @tab Reason
+@item NG-1 @tab Boom, MBF, MBF21, ZDoom, DECORATE, ZScript
+@tab Scope; vanilla fidelity first.  DeHackEd (M7) is the only
+extension format planned.
+@item NG-2 @tab Heretic, Hexen, Strife, Chex Quest @tab Different games.
+@item NG-3 @tab Network multiplayer
+@tab A network listener changes the licence (AGPL, §4.1) and the
+category (§19.2).  It needs its own PRD.
+@item NG-4 @tab Distributing commercial IWADs @tab Legal.
+@item NG-5 @tab Console, mobile, VR @tab Platform and certification cost.
+@item NG-6 @tab Telemetry of any kind @tab §9.
+@item NG-7 @tab Linking C code into the shipped binary
+@tab Product identity; the C oracle is test-only and out of tree.
+@end multitable
+
+@c ====================================================================
+@node Principles
+@chapter Principles
+
+@cindex principles
+@cindex determinism
+@enumerate
+@item
+@strong{Correctness before cleverness.}  Where gameplay depends on a
+behaviour, vanilla behaviour wins, including documented bugs.
+@item
+@strong{Determinism is the contract.}  The simulation has a fixed 35 Hz
+tic, 16.16 fixed-point maths with explicit wrapping, the original
+random tables, a stable iteration order, and no wall-clock time,
+floating point, or renderer state.
+@item
+@strong{Presentation never feeds back.}  Renderers, audio, and UI read
+a snapshot of the simulation and never change it.
+@item
+@strong{Evidence over assertion.}  Each fidelity claim names the test
+that proves it.
+@item
+@strong{Untrusted by default.}  Every byte of a WAD, demo, or save is
+parsed with checked bounds into typed errors.
+@end enumerate
+
+@c ====================================================================
+@node Architecture
+@chapter Architecture
+
+@menu
+* Porting Strategy::     Manual transliteration, and why.
+* Crate Layout::         Workspace crates and dependency rules.
+* State Ownership::      Replacing the engine's mutable globals.
+* Concurrency Model::    What runs where (Standard §3.2).
+* Rendering::            Software reference, presenter, GPU renderer.
+* Audio::                Sound effects, music, degraded mode.
+* Platform and Files::   Windowing, file locations, fonts.
+@end menu
+
+@node Porting Strategy
+@section Porting Strategy
+
+@cindex transliteration
+@cindex porting strategy
+Phobos uses @strong{manual transliteration} (porting reference,
+strategy 3).  Game-logic files (@file{p_*}, @file{g_game}, @file{info},
+@file{tables}, @file{m_random}, @file{m_fixed}) keep their function
+boundaries and call order, so a diff against @code{linuxdoom-1.10}
+stays readable and the random-number call sequence is preserved.
+Rendering (@file{r_*}), video (@file{v_video}), and the front end
+(@file{st_*}, @file{hu_*}, @file{am_map}, @file{m_menu},
+@file{wi_stuff}, @file{f_finale}) keep their algorithms but use
+idiomatic data structures.  Platform code (@file{i_*}) is rewritten
+from scratch.
+
+@cindex doomgeneric
+@cindex c2rust
+The other two strategies were rejected:
+
+@itemize @bullet
+@item
+A @code{doomgeneric} shim plays on day one but keeps C in the tree
+until the end, which NG-7 forbids.
+@item
+@code{c2rust} output carries C's global-pointer shape into thousands of
+@code{unsafe} blocks.  Goal G3 would then mean refactoring the whole
+tree a second time.
+@end itemize
+
+@cindex Chocolate Doom
+Kreimeier's pre-release cleanup of the source added a few bugs.
+Chocolate Doom documents the corrections.  The port follows Chocolate
+Doom's corrected behaviour and credits it in @file{CREDITS.md}
+(§15.3, OQ-4).
+
+@node Crate Layout
+@section Crate Layout
+
+@cindex crates
+@example
+phobos/
++-- crates/
+|   +-- phobos-fixed/    Fixed (16.16), Angle (BAM), trig tables, P_Random
+|   +-- phobos-wad/      WAD reader, IWAD identification, lump namespace
+|   +-- phobos-data/     Map, texture, patch, flat, sprite, sound decoding
+|   +-- phobos-sim/      Deterministic game simulation (forbid unsafe)
+|   +-- phobos-game/     Game flow: modes, missions, demos, saves, cheats
+|   +-- phobos-render/   Software renderer to an 8-bit framebuffer
+|   +-- phobos-ui/       Status bar, HUD, automap, menus, intermission, finales
+|   +-- phobos-audio/    Mixer, SFX, MUS sequencer, OPL backend
+|   +-- phobos-gpu/      wgpu presenter (M3) and enhanced renderer (M8)
+|   +-- phobos-app/      winit event loop, CLI, config, input mapping
+|   +-- phobos-tools/    phobos-tools wad|demo|map inspection and CI checks
++-- fuzz/                cargo-fuzz targets
+@end example
+
+Dependency rules, enforced by @code{cargo deny} bans and checked at
+review:
+
+@itemize @bullet
+@item
+@code{phobos-sim} depends only on @code{phobos-fixed} and
+@code{phobos-data}.
+@item
+No renderer depends on @code{phobos-wad}.  Renderers receive decoded
+resources.
+@item
+Only @code{phobos-app} and @code{phobos-gpu} depend on windowing or GPU
+crates.
+@end itemize
+
+@node State Ownership
+@section State Ownership
+
+@cindex global state
+@cindex thinkers
+The C engine keeps its state in mutable globals.  Phobos keeps it in
+owned structs passed down the call tree:
+
+@itemize @bullet
+@item
+@code{Level} owns the map geometry, sectors, lines, blockmap, and
+reject table.
+@item
+@code{World} owns the @code{Level}, the thinker arena, the players, and
+the random indices.  A tic is
+@code{fn tick(&mut World, &[TicCmd; MAXPLAYERS])}.
+@item
+@strong{Thinkers} live in an arena addressed by generational handles.
+An index-linked list inside the arena keeps the vanilla insertion and
+iteration order.  That order decides the random-call sequence, so demo
+sync depends on it.  Pointer fields such as @code{mobj_t.target} and
+@code{tracer} become @code{Option<MobjHandle>}.  A handle to a removed
+thing resolves to @code{None}.  In C, the same case reads freed memory
+that the zone allocator had not yet reused.  The port reproduces that
+observable result explicitly.
+@item
+Sector thing lists and blockmap links keep their vanilla link order,
+for the same reason.
+@item
+The arithmetic overflows that vanilla relies on use @code{wrapping_*}
+operations explicitly.  @code{overflow-checks = true} stays on in test
+profiles so that any accidental overflow fails.
+@end itemize
+
+@node Concurrency Model
+@section Concurrency Model
+
+@cindex concurrency
+@cindex Amdahl's law
+@multitable @columnfractions .2 .28 .52
+@headitem Work @tab Model @tab Decision and trade-off
+@item Simulation tic
+@tab Serial, one thread
+@tab Determinism needs one exact order of random calls and thinker
+updates.  A tic costs well under 1 ms, so by Amdahl's law parallelism
+could save almost nothing and would risk desync.  Serial is chosen and
+documented here.
+@item Event loop and presentation
+@tab winit main thread
+@tab winit requires the main thread on several platforms.  Frames go
+from the game thread to the presenter through a triple buffer, so
+neither side waits for the other.
+@item Software renderer
+@tab Serial at 320x200.  Optional banded parallel drawing with Rayon at
+2x and 4x scale (R-056)
+@tab BSP traversal is serial by nature.  Column and span drawing for
+screen bands can run in parallel once clipping is done.  Adopted only
+if a benchmark shows a gain over serial at that scale.
+@item Audio mixing and OPL synthesis
+@tab cpal callback thread
+@tab The simulation sends sound commands over a bounded lock-free SPSC
+queue and never blocks.  If the queue is full, the oldest command is
+dropped and counted.
+@item Level load
+@tab Rayon over textures
+@tab Texture compositing and patch decoding are embarrassingly
+parallel.  Kept only if it beats serial on the reference machine.
+@item Demo corpus in CI
+@tab One process per demo
+@tab Shared-nothing parallelism over the corpus.
+@end multitable
+
+@node Rendering
+@section Rendering
+
+@cindex software renderer
+@cindex wgpu
+@table @asis
+@item Software renderer (reference, M3)
+A port of @file{r_*.c} that writes palette indices to a 320x200
+framebuffer (or 2x / 4x scale, optional).  Colour maps, light
+diminishing, fuzz, sky, masked mid-textures, and sprite clipping follow
+vanilla.  Vanilla render limits (visplanes, drawsegs, vissprites) are
+enforced by default and overflow into a logged, non-fatal fallback.
+Vanilla crashes in this case; Phobos does not.  A limit-removing mode
+is optional (R-085).
+
+@item Presenter (M3)
+The indexed frame is uploaded to a wgpu texture.  A small WGSL shader
+expands it through @code{PLAYPAL} and applies palette flashes.  The
+output is scaled to 4:3 aspect, with integer scaling as an option.  If
+no GPU adapter is available, a @code{softbuffer} CPU path is used.
+
+@item Enhanced renderer (M8)
+A wgpu renderer reads the same @code{RenderSnapshot}.  It stores static
+level geometry in GPU buffers, draws sprites with instancing, and
+applies colour-map lighting in the shader.  Dynamic lights,
+post-processing, and ray-traced effects are optional.  Its output is
+checked against the software renderer on golden scenes.
+@end table
+
+@node Audio
+@section Audio
+
+@cindex audio
+@cindex OPL
+@table @asis
+@item Sound effects
+DMX @code{DS*} lumps are decoded and resampled to the output rate.
+There are 8 channels, using vanilla's priority and channel-stealing
+rules, distance attenuation, and stereo separation (@file{s_sound.c}).
+
+@item Music
+The @code{MUS} sequencer drives an OPL3 emulator voiced from the IWAD's
+@code{GENMIDI} bank, the vanilla sound.  Candidate crate:
+@code{nuked-opl3}, a pure-Rust port.  It is at 0.1.0 and needs the §24
+audit before adoption.  SoundFont MIDI is optional.
+
+@item Degraded mode
+If no audio device is available, the game runs silent and logs one
+warning.
+@end table
+
+@node Platform and Files
+@section Platform and Files
+
+@cindex XDG
+@cindex privacy
+@itemize @bullet
+@item
+Windowing and input use winit.  Gamepads use gilrs (optional).
+@item
+File locations follow XDG.  Configuration goes in
+@file{$XDG_CONFIG_HOME/phobos/phobos.toml}; saves and demos in
+@file{$XDG_DATA_HOME/phobos/}.
+@item
+IWAD search order: @code{-iwad}, @env{DOOMWADDIR}, @env{DOOMWADPATH},
+the XDG data directories plus @file{doom/}, then the current directory.
+@item
+No network access in any build (§9).
+@item
+The engine uses no fonts of its own except on the no-IWAD screen and
+the debug overlay.  Those use bundled Share Tech Mono / Inconsolata
+(OFL, §12) and the @code{steelbore} theme (§11, §11.6).  In-game menus
+and HUD use IWAD graphics.
+@end itemize
+
+@c ====================================================================
+@node Interfaces
+@chapter Interfaces
+
+@menu
+* Command Line::         Vanilla arguments and phobos-tools.
+* Configuration::        The TOML configuration file.
+* Data Formats::         Untrusted input the engine reads.
+@end menu
+
+@node Command Line
+@section Command Line
+
+@cindex command line
+Vanilla single-dash arguments are accepted as written.  GNU-style long
+forms are accepted alongside them.  @option{--help} and
+@option{--version} follow @code{spacecraft-cli-standard}, and
+@option{--version} carries the §15 attribution.
+
+@table @code
+@item -iwad @var{file}
+Select IWAD.
+@item -file @var{files@dots{}}
+Load PWADs with vanilla override rules.
+@item -deh @var{files@dots{}}
+Load DeHackEd patches (M7).
+@item -warp @var{e} @var{m}
+@itemx -warp @var{map}
+Start at a map.
+@item -skill @var{1--5}
+Skill level.
+@item -nomonsters
+@itemx -fast
+@itemx -respawn
+Gameplay switches.
+@item -gameversion @var{v}
+@code{1.9}, @code{ultimate}, @code{final}, @code{final2}.
+@item -record @var{file}
+@itemx -playdemo @var{file}
+@itemx -timedemo @var{file}
+Demo record, playback, benchmark.
+@item -statdump @var{file}
+Write level statistics in Chocolate Doom format.
+@item -width
+@itemx -height
+@itemx -fullscreen
+@itemx -window
+Display.
+@item -config @var{file}
+Alternate configuration.
+@end table
+
+@cindex phobos-tools
+@code{phobos-tools} is non-interactive and supports @option{--json}:
+@code{wad ls}, @code{wad identify}, @code{demo check}, @code{demo diff},
+@code{map stats}.  CI and agents use it.
+
+@node Configuration
+@section Configuration
+
+@cindex configuration
+TOML with sections @code{[video]}, @code{[audio]}, @code{[input]},
+@code{[gameplay]}, @code{[compat]}, @code{[debug]}.  An unknown key is
+warned about and ignored.  A missing or invalid value falls back to the
+default with a warning.  A malformed file never stops the game from
+starting.
+
+@node Data Formats
+@section Data Formats
+
+@cindex demo format
+@cindex savegame
+WAD (IWAD, PWAD), vanilla demo @file{.lmp} (version byte 109 and the
+earlier versions the selected game version implies), DeHackEd
+@file{.deh} / @code{DEHACKED} lump (M7), Phobos native saves
+(versioned), and optionally vanilla @file{.dsg} saves.  All are
+untrusted input.
+
+@c ====================================================================
+@node Verification
+@chapter Verification
+
+@cindex verification
+@cindex statcheck
+Category D owes a smoke test (§21.2).  Fidelity is the product, so
+Phobos sets a higher bar for itself.  This is a choice, not a Standard
+obligation.
+
+@multitable @columnfractions .22 .5 .28
+@headitem Layer @tab Evidence @tab Runs in
+@item Fixed point, tables, random
+@tab Unit tests against values from the C source; property tests on
+wrapping
+@tab CI
+@item WAD, map, patch, demo, save, DeHackEd parsers
+@tab Unit tests plus @code{cargo-fuzz} targets; no panic, no unbounded
+allocation
+@tab CI (time-boxed fuzz)
+@item Simulation
+@tab Per-tic @code{World} checksum; golden traces for scripted sequences
+(movement, doors, weapons, monsters)
+@tab CI
+@item Demo fidelity
+@tab Built-in demos and a demo corpus: @code{-statdump} output compared
+to Chocolate Doom built out of tree from a pinned commit (statcheck
+method)
+@tab CI on Freedoom and @file{doom1.wad}; locally on commercial IWADs
+@item Renderer
+@tab Headless render-to-PNG golden frames at fixed tics
+@tab CI
+@item GPU
+@tab wgpu validation on; headless adapter where available
+@tab CI where possible
+@item Performance
+@tab Criterion benchmarks; @code{-timedemo}
+@tab CI sample, full run before releases
+@end multitable
+
+@menu
+* Performance Targets::  Guiding figures, pending a reference machine.
+@end menu
+
+@node Performance Targets
+@section Performance Targets
+
+@cindex performance targets
+Category D has no §22 budget obligation.  These targets guide the work
+and gate optimisation decisions.  The reference machine is still to be
+chosen (OQ-3).
+
+@multitable @columnfractions .65 .35
+@headitem Measure @tab Target
+@item Tic simulation, 99th percentile, MAP30 (Doom II) @tab @leq{} 1 ms
+@item Software frame, 320x200 @tab @leq{} 1 ms
+@item Software frame, 4x scale (1280x800) @tab @leq{} 6 ms
+@item Map load, largest commercial map @tab @leq{} 250 ms
+@item Resident memory, any commercial IWAD @tab @leq{} 256 MiB
+@item Added input latency @tab No sleep beyond vsync and frame pacing
+@end multitable
+
+@c ====================================================================
+@node Compliance
+@chapter Standard Compliance
+
+@cindex Steelbore Standard
+@cindex compliance
+@multitable @columnfractions .14 .16 .70
+@headitem § @tab Applies @tab How Phobos satisfies it
+@item §2 @tab Yes @tab Codename Phobos (Mars's moon; astronomy domain),
+approved 2026-10-27.
+@item §3.1 @tab Yes @tab Rust; @code{#![forbid(unsafe_code)]} in
+@code{phobos-fixed}, @code{phobos-wad}, @code{phobos-data},
+@code{phobos-sim}, @code{phobos-game}; typed errors; no @code{unwrap} on
+input.
+@item §3.2 @tab Yes @tab Concurrency model (@pxref{Concurrency Model});
+serial simulation documented; release flags noted in @file{Cargo.toml}.
+@item §3.3 @tab Partly @tab No network, no privilege, no crypto; PQC is N/A.
+@item §4 @tab Yes @tab GPL-3.0-or-later; inherited GPL-2.0-or-later
+notices kept verbatim; REUSE; @file{LICENSES/}.
+@item §5.2 @tab Yes @tab Posture files (R-002).
+@item §5.5 @tab Yes @tab @file{packaging/guix.scm}, @file{default.nix},
+@file{PKGBUILD} (R-079).
+@item §5.7 @tab Yes @tab @file{AGENTS.md} and @file{CLAUDE.md} (R-003).
+@item §6.3, §6.4 @tab Yes @tab Signed commits; no upstream contributions
+to Chocolate Doom or others without per-contribution approval.
+@item §6.5 @tab Yes @tab @file{.gitattributes}, @file{.editorconfig} (R-005).
+@item §8 @tab Yes @tab @file{doc/phobos.texi} (R-078).
+@item §9 @tab Yes @tab No network, no telemetry, local files only, no
+third-party subresources at run time.
+@item §10, §18 @tab No @tab Game carve-out §18.5.  Adopted anyway from
+§18.5.2: remappable controls, and no capture of @key{Insert} or
+@key{CapsLock}.
+@item §11, §11.6 @tab Chrome only @tab No-IWAD screen, debug overlay,
+launcher messages.  The game world uses @code{PLAYPAL}.
+@item §12 @tab Yes @tab Bundled OFL fonts for chrome text.
+@item §13 @tab Tailored @tab Menus are IWAD-native vanilla menus, not a
+component system; recorded in the README register.
+@item §14 @tab Yes @tab ISO 8601 UTC in save metadata, logs, statdump
+headers.
+@item §15 @tab Yes @tab @option{--version}, README, @file{CREDITS.md}
+(id Software, Chocolate Doom, room4doom if code is adapted, Freedoom).
+@item §17 @tab Yes @tab @file{PRD.md} follows §17.5.
+@item §19 @tab Yes @tab Category D declared in README, AGENTS.md,
+PROJECTS.md.
+@item §20--§23, §25 @tab None owed @tab Category D.
+@item §24 @tab Audit tooling @tab @code{cargo audit}, @code{cargo deny}
+in CI; SBOM per release (R-077).
+@item §26 @tab Yes @tab @file{SECURITY.md} (R-010).
+@end multitable
+
+@c ====================================================================
+@node Milestones
+@chapter Milestones
+
+@cindex milestones
+@cindex progress tracking
+The MVP is M0--M5, delivering Phobos v0.1.  Each item carries a
+permanent identifier.  An item is required unless marked
+@emph{optional}; optional items never count toward progress.  As of
+@value{UPDATED} no item is complete.  Completion is ticked in
+@file{PRD.md}, which is the tracking document; this chapter mirrors its
+scope.
+
+@menu
+* M0::   Foundation and compliance.
+* M1::   WAD and resource layer.
+* M2::   Deterministic simulation core.
+* M3::   Classic renderer and front end.
+* M4::   Sound and music.
+* M5::   Demos, saves and fidelity gate.
+* M6::   Release engineering v1.0.
+* M7::   Vanilla modding extensions.
+* M8::   Enhanced GPU renderer.
+@end menu
+
+@node M0
+@section M0 --- Foundation and compliance
+
+@table @code
+@item R-001
+Cargo workspace with @file{rust-toolchain.toml} and committed
+@file{Cargo.lock}.
+@item R-002
+Posture files: @file{README.md} (posture, game declaration, Category D,
+conformance claim), @file{NOTICE.md}, @file{CONTRIBUTING.md},
+@file{LICENSE}, @file{LICENSES/}.
+@item R-003
+@file{AGENTS.md} and @file{CLAUDE.md} per §5.7.
+@item R-004
+REUSE headers on every file; @code{reuse lint} gates CI.
+@item R-005
+@file{.gitattributes} and @file{.editorconfig} per §6.5; CI rejects CR
+bytes.
+@item R-006
+CI runs @code{cargo fmt --check},
+@code{cargo clippy --all-targets --all-features --locked -- -D warnings},
+tests, doc tests, @code{cargo audit}, @code{cargo deny}.
+@item R-007
+Codename Phobos registered in @file{PROJECTS.md}, the §2.1 registry,
+and the §18.5 games registry.
+@item R-008
+``Or later'' grant verified against the GPL source release headers and
+recorded in @file{NOTICE.md}.
+@item R-009
+@file{CREDITS.md} listing id Software, Chocolate Doom, Freedoom, and
+prior Rust art consulted.
+@item R-010
+@file{SECURITY.md} with reporting channel and support window.
+@item R-011
+Chocolate Doom oracle built reproducibly out of tree (Nix, pinned
+commit), used by CI only.
+@item R-012
+CI fetches Freedoom and shareware @file{doom1.wad} by pinned SHA-256.
+@end table
+
+@node M1
+@section M1 --- WAD and resource layer
+
+@table @code
+@item R-013
+WAD reader with checked bounds; malformed input yields a typed error
+and never panics.
+@item R-014
+IWAD identification for all eight target IWADs by lump signature.
+@item R-015
+IWAD search in the documented order.
+@item R-016
+PWAD loading with vanilla @code{-file} override semantics.
+@item R-017
+Map lumps decoded: THINGS, LINEDEFS, SIDEDEFS, VERTEXES, SEGS, SSECTORS,
+NODES, SECTORS, REJECT, BLOCKMAP.
+@item R-018
+Graphics decoded: PLAYPAL, COLORMAP, PNAMES, TEXTURE1/2, patches,
+flats, sprites, ENDOOM.
+@item R-019
+Sound lumps decoded: DS*, DP*, D_* (MUS), GENMIDI.
+@item R-020
+Fuzz targets for WAD, map, patch, and texture decoding.
+@item R-021
+@code{phobos-tools wad ls} and @code{wad identify} with
+@option{--json}.
+@item R-022
+PWAD sprite and flat merging (@code{-merge}).  @emph{Optional.}
+@end table
+
+@node M2
+@section M2 --- Deterministic simulation core
+
+@cindex fixed-point
+@cindex P_Random
+@table @code
+@item R-023
+16.16 @code{Fixed} and BAM @code{Angle} with bit-exact
+@code{FixedMul} and @code{FixedDiv}, including the overflow branch.
+@item R-024
+@code{finesine}, @code{finetangent}, @code{tantoangle} tables carried
+verbatim.
+@item R-025
+@code{P_Random} and @code{M_Random} from the 256-entry table with
+separate indices.
+@item R-026
+Fixed 35 Hz tic driven by @code{TicCmd}; simulation crates contain no
+floating point and no clock reads (enforced by lint).
+@item R-027
+Thinker arena with generational handles that preserves vanilla
+iteration order.
+@item R-028
+@code{mobjinfo}, @code{states}, and sprite tables for the full Doom II
+set.
+@item R-029
+Player movement, collision, sliding, and use-line traversal.
+@item R-030
+All nine weapons and player sprite states, including the super shotgun.
+@item R-031
+Monster action functions for all Doom and Doom II monsters.
+@item R-032
+Line and sector specials: doors, plats, floors, ceilings, crushers,
+lights, switches, teleports, donuts, stairs.
+@item R-033
+Level triggers for E1M8, E2M8, E3M8, E4M6, E4M8, MAP07, and the MAP30
+boss brain.
+@item R-034
+Game mode and mission selection with episode and map progression,
+including secret exits to MAP31 and MAP32.
+@item R-035
+@code{-gameversion} emulation of 1.9, ultimate, final, and final2
+differences.
+@item R-036
+Skills 1--5 with @code{-nomonsters}, @code{-fast}, @code{-respawn}.
+@item R-037
+Vanilla cheat codes.
+@item R-038
+Per-tic @code{World} checksum exposed to tests and tools.
+@item R-039
+Headless simulation run with no window, GPU, or audio.
+@item R-040
+Emulation of the spechit and intercepts overflows as Chocolate Doom
+does.  @emph{Optional.}
+@end table
+
+@node M3
+@section M3 --- Classic renderer and front end
+
+@table @code
+@item R-041
+Software renderer port drawing palette indices to a 320x200
+framebuffer.
+@item R-042
+Colour-map lighting, light diminishing, fuzz, sky per game mode, masked
+textures.
+@item R-043
+Vanilla render limits overflow into a logged, non-fatal fallback.
+@item R-044
+wgpu presenter with @code{PLAYPAL} expansion, palette flashes, and 4:3
+scaling.
+@item R-045
+@code{softbuffer} presenter used when no GPU adapter is available.
+@item R-046
+Status bar and HUD, with level names for Doom, Doom II, TNT, and
+Plutonia.
+@item R-047
+Automap with follow, zoom, grid, and marks.
+@item R-048
+Menus: new game, episode (Doom only), skill, options, load, save, quit
+with ENDOOM.
+@item R-049
+Intermission: Doom animated maps and the Doom II background.
+@item R-050
+Finales: episode texts, Doom II, TNT, and Plutonia text screens, cast
+call, bunny scroller, E4 ending.
+@item R-051
+Title and attract loop per game mode.
+@item R-052
+Keyboard and mouse input with bindings remappable in the configuration.
+@item R-053
+TOML configuration and XDG file locations.
+@item R-054
+No-IWAD screen explaining how to supply an IWAD, using the
+@code{steelbore} theme.
+@item R-055
+Headless render-to-PNG golden frames in CI.
+@item R-056
+2x and 4x internal scale with banded parallel drawing.
+@emph{Optional.}
+@item R-057
+Uncapped frame rate with interpolation between tics.  @emph{Optional.}
+@item R-058
+Gamepad input.  @emph{Optional.}
+@end table
+
+@node M4
+@section M4 --- Sound and music
+
+@table @code
+@item R-059
+Audio output on a dedicated thread fed by a bounded lock-free queue
+that never blocks the tic.
+@item R-060
+Sound effects with vanilla channel priority, attenuation, and stereo
+separation.
+@item R-061
+MUS parser and sequencer.
+@item R-062
+OPL music voiced from @code{GENMIDI}, as the default backend.
+@item R-063
+Silent degraded mode with a single warning when no audio device is
+present.
+@item R-064
+Separate sound-effect and music volume settings.
+@item R-065
+SoundFont MIDI backend.  @emph{Optional.}
+@item R-066
+PC speaker sound effects.  @emph{Optional.}
+@end table
+
+@node M5
+@section M5 --- Demos, saves and fidelity gate
+
+@cindex demo compatibility
+@table @code
+@item R-067
+Vanilla @file{.lmp} demo playback.
+@item R-068
+Vanilla @file{.lmp} demo recording.
+@item R-069
+@code{-timedemo} reporting tics, wall time, and frame rate.
+@item R-070
+@code{-statdump} output in Chocolate Doom format.
+@item R-071
+Built-in demos of all eight IWADs stay in sync (CI for free IWADs,
+local run for commercial).
+@item R-072
+CI differential check: @code{-statdump} matches the Chocolate Doom
+oracle on the free-IWAD demo corpus.
+@item R-073
+@code{phobos-tools demo diff} reports the first divergent tic.
+@item R-074
+Native versioned savegame whose reload reproduces identical per-tic
+checksums.
+@item R-075
+A corrupt or incompatible save is refused with a message and the game
+continues.
+@item R-076
+Vanilla @file{.dsg} savegame loading.  @emph{Optional.}
+@end table
+
+@node M6
+@section M6 --- Release engineering v1.0
+
+@cindex packaging
+@table @code
+@item R-077
+SBOM generated from @file{Cargo.lock} in the release run and shipped
+with a checksum.
+@item R-078
+Texinfo manual @file{doc/phobos.texi} building to Info, HTML, and PDF.
+@item R-079
+@file{packaging/guix.scm}, @file{packaging/default.nix},
+@file{packaging/PKGBUILD} with @code{install-info}.
+@item R-080
+@option{--help} and @option{--version} per
+@code{spacecraft-cli-standard} with §15 attribution.
+@item R-081
+README compliance section with the tailoring register (§13).
+@item R-082
+Release profile flags (LTO, @code{codegen-units = 1}) noted in
+@file{Cargo.toml}, benchmarked before and after.
+@item R-083
+Installation verified from each package definition in a clean
+environment.
+@item R-084
+Signed release tag.
+@item R-085
+Limit-removing render mode.  @emph{Optional.}
+@item R-086
+macOS and Windows builds.  @emph{Optional.}
+@end table
+
+@node M7
+@section M7 --- Vanilla modding extensions
+
+@cindex DeHackEd
+@table @code
+@item R-087
+DeHackEd patches loaded from @code{-deh} files.
+@item R-088
+DeHackEd patches loaded from a @code{DEHACKED} lump.
+@item R-089
+DeHackEd parser fuzz target.
+@item R-090
+UMAPINFO support.  @emph{Optional.}
+@end table
+
+@node M8
+@section M8 --- Enhanced GPU renderer
+
+@table @code
+@item R-091
+wgpu renderer consuming the read-only @code{RenderSnapshot}, selectable
+at run time.
+@item R-092
+Static level geometry in GPU buffers and instanced sprites.
+@item R-093
+Colour-map lighting reproduced in WGSL.
+@item R-094
+Golden-scene parity check against the software renderer within a
+declared tolerance.
+@item R-095
+Device loss returns to the software renderer without ending the game.
+@item R-096
+Dynamic lights and post-processing.  @emph{Optional.}
+@item R-097
+Rust GPU shader path.  @emph{Optional.}
+@item R-098
+Ray-traced ambient occlusion and shadows.  @emph{Optional.}
+@item R-099
+WebGPU / WASM build.  @emph{Optional.}
+@end table
+
+@c ====================================================================
+@node Risks
+@chapter Risks
+
+@cindex risks
+@multitable @columnfractions .3 .1 .12 .48
+@headitem Risk @tab Impact @tab Likelihood @tab Mitigation
+@item Demo desync from subtle order or overflow differences
+@tab High @tab High
+@tab Per-tic checksums, Chocolate Doom oracle, @code{demo diff}
+first-divergence tool, transliteration that keeps call order.
+@item Thinker or link order lost when pointers become handles
+@tab High @tab Medium
+@tab Index-linked lists in the arena; golden traces on monster-heavy
+maps.
+@item Vanilla undefined behaviour (freed @code{target}, overflows) is
+relied on by demos
+@tab Medium @tab Medium
+@tab Emulate the observable result explicitly; R-040 optional overflow
+emulation.
+@item Commercial IWADs absent from CI
+@tab Medium @tab Certain
+@tab Freedoom and shareware in CI; a scripted local acceptance run
+before each release.
+@item Young OPL crate
+@tab Medium @tab Medium
+@tab §24 audit; fallback is porting Nuked OPL3 in tree, keeping its
+LGPL-2.1-or-later notice (§4.2).
+@item wgpu API churn
+@tab Low @tab High
+@tab Presenter stays thin; @code{softbuffer} fallback; versions pinned.
+@item Scope creep toward Boom or ZDoom
+@tab High @tab High
+@tab NG-1; DeHackEd is the only extension format.
+@item Trademark complaint
+@tab Medium @tab Low
+@tab Codename, no assets, no logos, disclaimer.
+@end multitable
+
+@c ====================================================================
+@node Open Questions
+@chapter Open Questions
+
+@cindex open questions
+@multitable @columnfractions .1 .45 .45
+@headitem ID @tab Question @tab Recommendation
+@item OQ-1 @tab Approve codename Phobos?
+@tab @strong{Resolved 2026-10-27:} approved by the maintainer.
+@item OQ-2 @tab Are macOS and Windows required for v1.0?
+@tab Optional: winit and wgpu make them cheap, but CI cost and a
+Personal posture argue against requiring them.
+@item OQ-3 @tab Which reference machine anchors the performance targets?
+@tab The maintainer's main Steelbore OS workstation, recorded with CPU,
+GPU, and RAM.
+@item OQ-4 @tab May the port adapt Chocolate Doom code
+(GPL-2.0-or-later), or only follow its documented behaviour?
+@tab Allow it with file-level credit; the licences are compatible.
+@item OQ-5 @tab Default music backend: OPL or SoundFont?
+@tab OPL (vanilla sound); SoundFont optional.
+@item OQ-6 @tab Is vanilla @file{.dsg} save loading worth the effort?
+@tab Keep it optional; the native format is required.
+@end multitable
+
+@c ====================================================================
+@node References
+@chapter References
+
+@cindex references
+@itemize @bullet
+@item
+@cite{RustDoom} PRD v1.0 (2026-07-23), @file{RustDoom.html}.
+@item
+@cite{Doom-to-Rust Porting Reference} v1.0 (2026-07-23),
+@file{doomrustport.texi}.
+@item
+id Software, @uref{https://github.com/id-Software/DOOM,
+id-Software/DOOM}; @uref{https://doomwiki.org/wiki/Doom_source_code,
+Doom source code history}.
+@item
+@uref{https://github.com/chocolate-doom/chocolate-doom, Chocolate Doom}
+and its @uref{https://github.com/chocolate-doom/statcheck, statcheck}
+demo-regression method.
+@item
+Prior Rust art: @uref{https://github.com/flukejones/room4doom,
+room4doom}, @uref{https://github.com/Henrique194/iron-doom, iron-doom},
+@uref{https://github.com/cristicbz/rust-doom, rust-doom}.
+@item
+@uref{https://freedoom.github.io/, Freedoom}.
+@item
+The Steelbore Standard v2.14, §2, §3, §4, §9, §11, §17.5, §18.5, §19.
+@end itemize
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@bye

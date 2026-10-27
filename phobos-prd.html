@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html>
+<!-- Created by GNU Texinfo 7.2, https://www.gnu.org/software/texinfo/ -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- This is the Product Requirements Document for Phobos, the
+Spacecraft Software port of Doom, The Ultimate Doom,
+Doom II and Final Doom to memory-safe Rust (document
+version 1.0, updated 2026-10-27).
+
+Copyright © 2026 Mohamed Hammad & Spacecraft Software.
+
+This document is licensed under the Creative Commons Attribution-ShareAlike
+4.0 International License (CC-BY-SA-4.0).  To view a copy of this licence,
+visit https://creativecommons.org/licenses/by-sa/4.0/. -->
+<title>Phobos Product Requirements 1.0</title>
+
+<meta name="description" content="Phobos Product Requirements 1.0">
+<meta name="keywords" content="Phobos Product Requirements 1.0">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2any">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link href="#Top" rel="start" title="Top">
+<link href="#Index" rel="index" title="Index">
+<link href="#SEC_Contents" rel="contents" title="Table of Contents">
+<link href="#Overview" rel="next" title="Overview">
+<style type="text/css">
+<!--
+/* SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+   SPDX-License-Identifier: GPL-3.0-or-later
+
+   Spacecraft Software HTML theme for texi2any output.
+   Apply with:  texi2any --html --no-split --css-include=spacecraft.css FILE.texi
+   Canonical copy: /spacecraft-software/construct/steelbore-color-palette/assets/spacecraft.css
+   — the copies in standard/ and spacecraft-texinfo-document/assets/ are synced
+   derivatives, written by the same generator; keep all three byte-identical. */
+
+/* >>> generated from steelbore.toml — do not edit below this line <<< */
+
+/* Palette: The Steelbore Standard §11 (v2.08).  Typography: §12 (Share Tech Mono / Inconsolata,
+   both OFL).  Values are generated from steelbore.toml — §11.4 requires they be
+   read, never retyped.  Regenerate with .github/generate-palette-css.py.
+
+   Fonts are resolved locally and never fetched (§9.1): an installed copy is
+   used where one exists, and the generic monospace fallback covers the rest.
+   No third-party subresource is requested at render time. */
+
+
+a.copiable-link {visibility: hidden; text-decoration: none; line-height: 0em}
+a.summary-letter-printindex {text-decoration: none}
+div.example {margin-left: 3.2em}
+kbd.key {font-style: normal}
+span:hover a.copiable-link {visibility: visible}
+td.printindex-index-entry {vertical-align: top}
+td.printindex-index-section {vertical-align: top; padding-left: 1em}
+th.entries-header-printindex {text-align:left}
+th.sections-header-printindex {text-align:left; padding-left: 1em}
+ul.mark-bullet {list-style-type: disc}
+ul.toc-numbered-mark {list-style: none}
+@font-face {
+  font-family: 'Share Tech Mono';
+  src: local('Share Tech Mono'), local('ShareTechMono-Regular');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inconsolata';
+  src: local('Inconsolata'), local('Inconsolata-Regular');
+  font-display: swap;
+}
+
+:root {
+  --void-navy:      #000027;  /* Void Navy — background */
+  --quantum-blue:   #0E2A47;  /* Quantum Blue — surface */
+  --deep-matrix:    #0B1A12;  /* Deep Matrix — surface-alt */
+  --platinum-mist:  #D9DEE5;  /* Platinum Mist — foreground */
+  --plasma-orange:  #FF5E00;  /* Plasma Orange — accent */
+  --pulse-violet:   #8A6CFF;  /* Pulse Violet — structure, border */
+  --acid-lime:      #B4FF00;  /* Acid Lime — success, focus */
+  --mars-red:       #FF3B3B;  /* Mars Red — error */
+  --plasma-magenta: #E445FF;  /* Plasma Magenta — warning */
+  color-scheme: dark;
+}
+
+/* >>> end generated — hand-authored layout follows <<< */
+
+body {
+  background-color: var(--void-navy);
+  color: var(--platinum-mist);
+  font-family: 'Inconsolata', monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 auto;
+  max-width: 50rem;
+  padding: 2rem 1.5rem;
+}
+
+h1, h2, h3, h4, h5, h6,
+.settitle, .shortcontents-heading, .contents-heading {
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: normal;
+  line-height: 1.25;
+}
+
+h1, .titlefont, .settitle           { color: var(--plasma-orange); }
+h2, .chapter, .unnumbered, .appendix { color: var(--plasma-orange); }
+h3, .section                         { color: var(--acid-lime); }
+h4, h5, h6, .subsection, .subsubsection { color: var(--pulse-violet); font-style: italic; }
+
+a:link    { color: var(--pulse-violet); }
+a:visited { color: var(--plasma-orange); }
+a:hover   { color: var(--acid-lime); }
+a:focus-visible { outline: 2px solid var(--acid-lime); outline-offset: 2px; }
+
+code, samp, kbd, tt, pre, .verbatim,
+.example, .smallexample, .lisp {
+  font-family: 'Inconsolata', monospace;
+  color: var(--platinum-mist);
+}
+
+pre.example, pre.verbatim, pre.smallexample, pre.lisp, pre.display {
+  background-color: var(--deep-matrix);  /* surface: code / terminal well */
+  border-left: 3px solid var(--pulse-violet);  /* drawn edge (§11.0.1)    */
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+}
+
+blockquote, .quotation {
+  border-left: 3px solid var(--plasma-orange);
+  margin-left: 0;
+  padding-left: 1rem;
+  color: var(--platinum-mist);
+}
+
+table { border-collapse: collapse; }
+th, td { border: 1px solid var(--pulse-violet); padding: 0.35rem 0.6rem; }
+th { color: var(--acid-lime); font-family: 'Share Tech Mono', monospace; }
+
+/* Definition commands (@deffn etc.) */
+dt { color: var(--acid-lime); }
+dfn, var { color: var(--plasma-orange); font-style: italic; }
+
+hr { border: none; border-top: 1px solid var(--pulse-violet); }
+
+-->
+</style>
+
+
+</head>
+
+<body lang="en">
+
+
+
+
+
+
+<div class="top-level-extent" id="Top">
+<div class="nav-panel">
+<p>
+Next: <a href="#Overview" accesskey="n" rel="next">Overview</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h1 class="top" id="Phobos-Product-Requirements"><span>Phobos Product Requirements<a class="copiable-link" href="#Phobos-Product-Requirements"> &para;</a></span></h1>
+
+<p>This is the Product Requirements Document for Phobos, the
+Spacecraft Software port of <cite class="cite">Doom</cite>, <cite class="cite">The Ultimate Doom</cite>,
+<cite class="cite">Doom II</cite> and <cite class="cite">Final Doom</cite> to memory-safe Rust (document
+version 1.0, updated 2026-10-27).
+</p>
+<p>Copyright &copy; 2026 Mohamed Hammad &amp; Spacecraft Software.
+</p>
+<blockquote class="quotation">
+<p>This document is licensed under the Creative Commons Attribution-ShareAlike
+4.0 International License (CC-BY-SA-4.0).  To view a copy of this licence,
+visit <a class="url" href="https://creativecommons.org/licenses/by-sa/4.0/">https://creativecommons.org/licenses/by-sa/4.0/</a>.
+</p></blockquote>
+
+
+<div class="region-contents" id="SEC_Contents">
+<h2 class="contents-heading">Table of Contents</h2>
+
+<div class="contents">
+
+<ul class="toc-numbered-mark">
+  <li><a id="toc-Overview" href="#Overview">1 Overview</a></li>
+  <li><a id="toc-Sources-and-Changes" href="#Sources-and-Changes">2 Sources and Changes</a></li>
+  <li><a id="toc-Needs" href="#Needs">3 Needs</a></li>
+  <li><a id="toc-Target-Games" href="#Target-Games">4 Target Games</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Per_002dgame-Content" href="#Per_002dgame-Content">4.1 Per-game Content</a></li>
+  </ul></li>
+  <li><a id="toc-Goals-and-Non_002dgoals" href="#Goals">5 Goals and Non-goals</a></li>
+  <li><a id="toc-Principles" href="#Principles">6 Principles</a></li>
+  <li><a id="toc-Architecture" href="#Architecture">7 Architecture</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Porting-Strategy" href="#Porting-Strategy">7.1 Porting Strategy</a></li>
+    <li><a id="toc-Crate-Layout" href="#Crate-Layout">7.2 Crate Layout</a></li>
+    <li><a id="toc-State-Ownership" href="#State-Ownership">7.3 State Ownership</a></li>
+    <li><a id="toc-Concurrency-Model" href="#Concurrency-Model">7.4 Concurrency Model</a></li>
+    <li><a id="toc-Rendering" href="#Rendering">7.5 Rendering</a></li>
+    <li><a id="toc-Audio" href="#Audio">7.6 Audio</a></li>
+    <li><a id="toc-Platform-and-Files" href="#Platform-and-Files">7.7 Platform and Files</a></li>
+  </ul></li>
+  <li><a id="toc-Interfaces" href="#Interfaces">8 Interfaces</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Command-Line" href="#Command-Line">8.1 Command Line</a></li>
+    <li><a id="toc-Configuration" href="#Configuration">8.2 Configuration</a></li>
+    <li><a id="toc-Data-Formats" href="#Data-Formats">8.3 Data Formats</a></li>
+  </ul></li>
+  <li><a id="toc-Verification" href="#Verification">9 Verification</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-Performance-Targets" href="#Performance-Targets">9.1 Performance Targets</a></li>
+  </ul></li>
+  <li><a id="toc-Standard-Compliance" href="#Compliance">10 Standard Compliance</a></li>
+  <li><a id="toc-Milestones" href="#Milestones">11 Milestones</a>
+  <ul class="toc-numbered-mark">
+    <li><a id="toc-M0-_002d_002d_002d-Foundation-and-compliance" href="#M0">11.1 M0 &mdash; Foundation and compliance</a></li>
+    <li><a id="toc-M1-_002d_002d_002d-WAD-and-resource-layer" href="#M1">11.2 M1 &mdash; WAD and resource layer</a></li>
+    <li><a id="toc-M2-_002d_002d_002d-Deterministic-simulation-core" href="#M2">11.3 M2 &mdash; Deterministic simulation core</a></li>
+    <li><a id="toc-M3-_002d_002d_002d-Classic-renderer-and-front-end" href="#M3">11.4 M3 &mdash; Classic renderer and front end</a></li>
+    <li><a id="toc-M4-_002d_002d_002d-Sound-and-music" href="#M4">11.5 M4 &mdash; Sound and music</a></li>
+    <li><a id="toc-M5-_002d_002d_002d-Demos_002c-saves-and-fidelity-gate" href="#M5">11.6 M5 &mdash; Demos, saves and fidelity gate</a></li>
+    <li><a id="toc-M6-_002d_002d_002d-Release-engineering-v1_002e0" href="#M6">11.7 M6 &mdash; Release engineering v1.0</a></li>
+    <li><a id="toc-M7-_002d_002d_002d-Vanilla-modding-extensions" href="#M7">11.8 M7 &mdash; Vanilla modding extensions</a></li>
+    <li><a id="toc-M8-_002d_002d_002d-Enhanced-GPU-renderer" href="#M8">11.9 M8 &mdash; Enhanced GPU renderer</a></li>
+  </ul></li>
+  <li><a id="toc-Risks" href="#Risks">12 Risks</a></li>
+  <li><a id="toc-Open-Questions" href="#Open-Questions">13 Open Questions</a></li>
+  <li><a id="toc-References" href="#References">14 References</a></li>
+  <li><a id="toc-Index" href="#Index" rel="index">Index</a></li>
+</ul>
+</div>
+</div>
+<hr>
+<div class="chapter-level-extent" id="Overview">
+<div class="nav-panel">
+<p>
+Next: <a href="#Sources-and-Changes" accesskey="n" rel="next">Sources and Changes</a>, Previous: <a href="#Top" accesskey="p" rel="prev">Phobos Product Requirements</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Overview-1"><span>1 Overview<a class="copiable-link" href="#Overview-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-overview"></a>
+<a class="index-entry-id" id="index-id-Tech-1"></a>
+<p>Phobos is one Rust codebase, with no C in the tree.  It plays
+every commercial id Tech 1 IWAD from <cite class="cite">Doom</cite> to <cite class="cite">Final Doom</cite>
+and the free Freedoom IWADs.  The engine picks its game mode from the
+IWAD it loads.  Fidelity is the product.  Vanilla demos shall play back
+in sync and level statistics shall match Chocolate Doom, the reference
+vanilla port.  This keeps the port honest: a behavioural difference
+shows up as a failed test, not as a forum report.
+</p>
+<p>The game logic is transliterated by hand from the GPL source release.
+The platform, I/O, audio, and presentation layers are written as
+idiomatic Rust from the start.  A software renderer, ported from the
+original <samp class="file">r_*.c</samp>, is the reference for how the game looks.  A
+wgpu renderer with optional enhancements comes later and is checked
+against that reference.  It never replaces it.
+</p>
+<a class="index-entry-id" id="index-MVP"></a>
+<table class="multitable">
+<thead><tr><th width="28%">Field</th><th width="72%">Value</th></tr></thead>
+<tbody><tr><td width="28%">Document</td><td width="72%">Product Requirements Document, version 1.0</td></tr>
+<tr><td width="28%">Date</td><td width="72%">2026-10-27</td></tr>
+<tr><td width="28%">Status</td><td width="72%">Draft, awaiting maintainer review</td></tr>
+<tr><td width="28%">Codename</td><td width="72%"><strong class="strong">Phobos</strong>, approved 2026-10-27.  Working
+directory <samp class="file">phobos/</samp>; repository <code class="code">Spacecraft-Software/Phobos</code></td></tr>
+<tr><td width="28%">MVP</td><td width="72%">M0&ndash;M5 &mdash; Phobos v0.1</td></tr>
+<tr><td width="28%">Class</td><td width="72%">Game (Standard §18.5); exempt from §18 and §10</td></tr>
+<tr><td width="28%">Assurance category</td><td width="72%">D &mdash; Incidental (Standard §19.1: games)</td></tr>
+<tr><td width="28%">Posture</td><td width="72%">Personal / Hobby (Standard §5.1)</td></tr>
+<tr><td width="28%">Engine licence</td><td width="72%"><code class="code">GPL-3.0-or-later</code>; inherited id Software
+code <code class="code">GPL-2.0-or-later</code> (§4.2)</td></tr>
+<tr><td width="28%">Document licence</td><td width="72%"><code class="code">CC-BY-SA-4.0</code> (Standard §4.1.1)</td></tr>
+<tr><td width="28%">Governing standard</td><td width="72%">The Steelbore Standard v2.14</td></tr>
+<tr><td width="28%">Tracking document</td><td width="72%"><samp class="file">PRD.md</samp> (Standard §17.5); this
+manual mirrors its scope, and ticks are kept there</td></tr>
+</tbody>
+</table>
+
+<a class="index-entry-id" id="index-trademark"></a>
+<blockquote class="quotation">
+<p><b class="b">Trademark:</b> <cite class="cite">Doom</cite> is a trademark of id Software / ZeniMax Media.  Phobos is
+an independent engine that reads Doom data files.  It ships no id
+Software assets and no id Software logos, and claims no endorsement.
+</p></blockquote>
+
+<hr>
+</div>
+<div class="chapter-level-extent" id="Sources-and-Changes">
+<div class="nav-panel">
+<p>
+Next: <a href="#Needs" accesskey="n" rel="next">Needs</a>, Previous: <a href="#Overview" accesskey="p" rel="prev">Overview</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Sources-and-Changes-1"><span>2 Sources and Changes<a class="copiable-link" href="#Sources-and-Changes-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-sources"></a>
+<a class="index-entry-id" id="index-RustDoom"></a>
+<p>This PRD merges two earlier documents and settles the questions they
+left open.
+</p>
+<dl class="table">
+<dt><samp class="file">RustDoom.html</samp> &mdash; <cite class="cite">RustDoom</cite> PRD v1.0, 2026-07-23</dt>
+<dd><p>Functional requirement areas, the crate split, the determinism
+principles, the two renderer modes, test and fuzz strategy, risks,
+command-line surface.
+</p>
+</dd>
+<dt><samp class="file">doomrustport.texi</samp> &mdash; <cite class="cite">Doom-to-Rust Porting Reference</cite> v1.0, 2026-07-23</dt>
+<dd><p>Source history and licence, prior art (room4doom, iron-doom,
+rust-doom), the three porting strategies, the determinism contract
+(16.16 fixed point, <code class="code">P_Random</code> table, no <code class="code">f32</code> in game
+logic), Freedoom-based CI, crate stack.
+</p></dd>
+</dl>
+
+<table class="multitable">
+<thead><tr><th width="14%">Topic</th><th width="22%">RustDoom PRD said</th><th width="28%">This PRD decides</th><th width="36%">Why</th></tr></thead>
+<tbody><tr><td width="14%">Scope</td><td width="22%">Doom 1 only; Doom II a non-goal</td><td width="28%">Doom, Ultimate Doom, Doom II, TNT, Plutonia</td><td width="36%">The engine is shared.  The extra work is game-mode logic, Doom II
+actors, finales, and the cast call.</td></tr>
+<tr><td width="14%">Name</td><td width="22%">&ldquo;RustDoom&rdquo; (working title)</td><td width="28%">Codename Phobos (approved 2026-10-27)</td><td width="36%">§2 needs an aerospace or astronomy codename.  A trademark should
+not appear in the product name.</td></tr>
+<tr><td width="14%">Licence</td><td width="22%">Open question: GPL-2.0+ or Apache/MIT</td><td width="28%"><code class="code">GPL-3.0-or-later</code>, inheriting <code class="code">GPL-2.0-or-later</code></td><td width="36%">The port derives from the GPL source (§4.1, §4.2).  &ldquo;Or later&rdquo;
+makes GPL-3.0 compatible.  R-008 checks the grant.</td></tr>
+<tr><td width="14%">Porting route</td><td width="22%">Not chosen</td><td width="28%">Manual transliteration</td><td width="36%">Keeps game-logic structure for demo sync, and shows memory-safe
+design instead of copying C&rsquo;s shape.</td></tr>
+<tr><td width="14%">Reference renderer</td><td width="22%">GPU &ldquo;Classic Accuracy Mode&rdquo;</td><td width="28%">Ported software renderer; GPU renderer after MVP</td><td width="36%">Bit-faithful output and headless golden frames are cheap in
+software.  GPU rasterisation cannot reproduce vanilla column and
+visplane behaviour exactly.</td></tr>
+<tr><td width="14%">Shaders</td><td width="22%">Rust GPU preferred, WGSL fallback</td><td width="28%">WGSL primary; Rust GPU optional</td><td width="36%">Rust GPU needs a nightly toolchain, which conflicts with a pinned
+stable toolchain (§24, §3.1).</td></tr>
+<tr><td width="14%">Telemetry</td><td width="22%">Opt-in</td><td width="28%">None at all</td><td width="36%">§9: no tracking, no network.</td></tr>
+<tr><td width="14%">Platforms</td><td width="22%">Windows, Linux, macOS required</td><td width="28%">Linux required; macOS and Windows optional (OQ-2)</td><td width="36%">Personal posture; Steelbore OS is the home platform.</td></tr>
+<tr><td width="14%">Music</td><td width="22%">MUS to MIDI with SoundFont</td><td width="28%">OPL emulation from <code class="code">GENMIDI</code>; SoundFont optional</td><td width="36%">This is how vanilla sounds; room4doom showed it is practical.</td></tr>
+<tr><td width="14%">Fidelity oracle</td><td width="22%">Internal golden demos</td><td width="28%">Chocolate Doom <code class="code">-statdump</code> runs plus internal checksums</td><td width="36%">An outside reference catches mistakes that self-recorded goldens
+copy forward.</td></tr>
+</tbody>
+</table>
+
+<hr>
+</div>
+<div class="chapter-level-extent" id="Needs">
+<div class="nav-panel">
+<p>
+Next: <a href="#Target-Games" accesskey="n" rel="next">Target Games</a>, Previous: <a href="#Sources-and-Changes" accesskey="p" rel="prev">Sources and Changes</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Needs-1"><span>3 Needs<a class="copiable-link" href="#Needs-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-needs"></a>
+<p><em class="emph">Players and preservationists</em> want to play the classic id Tech 1
+games on current Linux systems with vanilla behaviour: the same
+physics, the same monster behaviour, the same random sequence, so that
+historic demos play back and speedrun records stay checkable.  They
+supply their own IWADs and expect the engine to find them, play every
+map, and never crash on a malformed PWAD.
+</p>
+<p><em class="emph">The maintainer</em> wants a complete id Tech 1 port in safe Rust, as
+a showcase.  The simulation shall have no <code class="code">unsafe</code>, and every
+claim of fidelity shall be backed by a test anyone can rerun.  No
+existing Rust effort has shipped all of <cite class="cite">Doom</cite> through
+<cite class="cite">Final Doom</cite>.  room4doom comes closest and still lacks the cast
+call and the automap.
+</p>
+<hr>
+</div>
+<div class="chapter-level-extent" id="Target-Games">
+<div class="nav-panel">
+<p>
+Next: <a href="#Goals" accesskey="n" rel="next">Goals and Non-goals</a>, Previous: <a href="#Needs" accesskey="p" rel="prev">Needs</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Target-Games-1"><span>4 Target Games<a class="copiable-link" href="#Target-Games-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-IWAD"></a>
+<a class="index-entry-id" id="index-game-mode"></a>
+<a class="index-entry-id" id="index-Freedoom"></a>
+<table class="multitable">
+<thead><tr><th width="19%">IWAD</th><th width="14%">Mode</th><th width="13%">Mission</th><th width="16%">Maps</th><th width="14%">Version</th><th width="24%">In CI</th></tr></thead>
+<tbody><tr><td width="19%"><samp class="file">doom1.wad</samp></td><td width="14%">shareware</td><td width="13%">doom</td><td width="16%">E1M1&ndash;E1M9</td><td width="14%">1.9</td><td width="24%">Yes (shareware)</td></tr>
+<tr><td width="19%"><samp class="file">doom.wad</samp> (registered)</td><td width="14%">registered</td><td width="13%">doom</td><td width="16%">E1&ndash;E3</td><td width="14%">1.9</td><td width="24%">No, local only</td></tr>
+<tr><td width="19%"><samp class="file">doom.wad</samp> (Ultimate)</td><td width="14%">retail</td><td width="13%">doom</td><td width="16%">E1&ndash;E4</td><td width="14%">ultimate</td><td width="24%">No, local only</td></tr>
+<tr><td width="19%"><samp class="file">doom2.wad</samp></td><td width="14%">commercial</td><td width="13%">doom2</td><td width="16%">MAP01&ndash;MAP32</td><td width="14%">1.9</td><td width="24%">No, local only</td></tr>
+<tr><td width="19%"><samp class="file">tnt.wad</samp></td><td width="14%">commercial</td><td width="13%">pack_tnt</td><td width="16%">MAP01&ndash;MAP32</td><td width="14%">final</td><td width="24%">No, local only</td></tr>
+<tr><td width="19%"><samp class="file">plutonia.wad</samp></td><td width="14%">commercial</td><td width="13%">pack_plut</td><td width="16%">MAP01&ndash;MAP32</td><td width="14%">final</td><td width="24%">No, local only</td></tr>
+<tr><td width="19%"><samp class="file">freedoom1.wad</samp></td><td width="14%">retail</td><td width="13%">doom</td><td width="16%">E1&ndash;E4</td><td width="14%">ultimate</td><td width="24%">Yes</td></tr>
+<tr><td width="19%"><samp class="file">freedoom2.wad</samp></td><td width="14%">commercial</td><td width="13%">doom2</td><td width="16%">MAP01&ndash;MAP32</td><td width="14%">1.9</td><td width="24%">Yes</td></tr>
+</tbody>
+</table>
+
+<a class="index-entry-id" id="index-game-version"></a>
+<p>The game version can be changed with <code class="code">-gameversion</code> (values
+<code class="code">1.9</code>, <code class="code">ultimate</code>, <code class="code">final</code>, <code class="code">final2</code>, as in
+Chocolate Doom).  This covers behaviour that changed between
+executables.  One example is how teleports set a thing&rsquo;s height in the
+<cite class="cite">Final Doom</cite> executable.  Another is the <cite class="cite">Ultimate Doom</cite>
+change to Lost Soul bounce.
+</p>
+
+<ul class="mini-toc">
+<li><a href="#Per_002dgame-Content" accesskey="1">Per-game Content</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Per_002dgame-Content">
+<div class="nav-panel">
+<p>
+Up: <a href="#Target-Games" accesskey="u" rel="up">Target Games</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Per_002dgame-Content-1"><span>4.1 Per-game Content<a class="copiable-link" href="#Per_002dgame-Content-1"> &para;</a></span></h3>
+
+<dl class="table">
+<dt><cite class="cite">Doom</cite> / <cite class="cite">The Ultimate Doom</cite></dt>
+<dd><p>Episode select, animated intermission maps (<samp class="file">wi_stuff</samp>), episode
+end texts, E3 bunny scroller, E4 ending, sky per episode, boss triggers
+on E1M8 (tag 666), E2M8, E3M8, E4M6, E4M8.
+</p>
+</dd>
+<dt><cite class="cite">Doom II</cite></dt>
+<dd><p>Super shotgun; eight extra monsters, including the Arch-vile, Pain
+Elemental, and Icon of Sin; MAP07 tags 666/667; MAP30 boss brain
+spawner; secret exits to MAP31 and MAP32; between-map text screens;
+cast call; sky per map range.
+</p>
+</dd>
+<dt><cite class="cite">Final Doom</cite></dt>
+<dd><p>Doom II engine with mission-specific level names (HUD, automap),
+finale texts, and the <code class="code">final</code> / <code class="code">final2</code> executable
+behaviour.
+</p></dd>
+</dl>
+
+<hr>
+</div>
+</div>
+<div class="chapter-level-extent" id="Goals">
+<div class="nav-panel">
+<p>
+Next: <a href="#Principles" accesskey="n" rel="next">Principles</a>, Previous: <a href="#Target-Games" accesskey="p" rel="prev">Target Games</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Goals-and-Non_002dgoals"><span>5 Goals and Non-goals<a class="copiable-link" href="#Goals-and-Non_002dgoals"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-goals"></a>
+<table class="multitable">
+<thead><tr><th width="10%">ID</th><th width="90%">Goal</th></tr></thead>
+<tbody><tr><td width="10%">G1</td><td width="90%">Play every map of the eight target IWADs from start to finish.</td></tr>
+<tr><td width="10%">G2</td><td width="90%">Vanilla demos play back in sync; statistics match Chocolate Doom.</td></tr>
+<tr><td width="10%">G3</td><td width="90%">Safe Rust throughout; <code class="code">unsafe</code> forbidden in simulation crates.</td></tr>
+<tr><td width="10%">G4</td><td width="90%">Untrusted WAD, demo, and save input can never crash or
+corrupt the engine.</td></tr>
+<tr><td width="10%">G5</td><td width="90%">Simulation runs headless with no window, GPU, or audio dependency.</td></tr>
+<tr><td width="10%">G6</td><td width="90%">Ships through Guix, Nix, and Arch packaging with a Texinfo manual.</td></tr>
+<tr><td width="10%">G7</td><td width="90%">Optional modern GPU renderer that never changes gameplay.</td></tr>
+</tbody>
+</table>
+
+<a class="index-entry-id" id="index-non_002dgoals"></a>
+<table class="multitable">
+<thead><tr><th width="10%">ID</th><th width="40%">Non-goal</th><th width="50%">Reason</th></tr></thead>
+<tbody><tr><td width="10%">NG-1</td><td width="40%">Boom, MBF, MBF21, ZDoom, DECORATE, ZScript</td><td width="50%">Scope; vanilla fidelity first.  DeHackEd (M7) is the only
+extension format planned.</td></tr>
+<tr><td width="10%">NG-2</td><td width="40%">Heretic, Hexen, Strife, Chex Quest</td><td width="50%">Different games.</td></tr>
+<tr><td width="10%">NG-3</td><td width="40%">Network multiplayer</td><td width="50%">A network listener changes the licence (AGPL, §4.1) and the
+category (§19.2).  It needs its own PRD.</td></tr>
+<tr><td width="10%">NG-4</td><td width="40%">Distributing commercial IWADs</td><td width="50%">Legal.</td></tr>
+<tr><td width="10%">NG-5</td><td width="40%">Console, mobile, VR</td><td width="50%">Platform and certification cost.</td></tr>
+<tr><td width="10%">NG-6</td><td width="40%">Telemetry of any kind</td><td width="50%">§9.</td></tr>
+<tr><td width="10%">NG-7</td><td width="40%">Linking C code into the shipped binary</td><td width="50%">Product identity; the C oracle is test-only and out of tree.</td></tr>
+</tbody>
+</table>
+
+<hr>
+</div>
+<div class="chapter-level-extent" id="Principles">
+<div class="nav-panel">
+<p>
+Next: <a href="#Architecture" accesskey="n" rel="next">Architecture</a>, Previous: <a href="#Goals" accesskey="p" rel="prev">Goals and Non-goals</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Principles-1"><span>6 Principles<a class="copiable-link" href="#Principles-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-principles"></a>
+<a class="index-entry-id" id="index-determinism"></a>
+<ol class="enumerate">
+<li> <strong class="strong">Correctness before cleverness.</strong>  Where gameplay depends on a
+behaviour, vanilla behaviour wins, including documented bugs.
+</li><li> <strong class="strong">Determinism is the contract.</strong>  The simulation has a fixed 35 Hz
+tic, 16.16 fixed-point maths with explicit wrapping, the original
+random tables, a stable iteration order, and no wall-clock time,
+floating point, or renderer state.
+</li><li> <strong class="strong">Presentation never feeds back.</strong>  Renderers, audio, and UI read
+a snapshot of the simulation and never change it.
+</li><li> <strong class="strong">Evidence over assertion.</strong>  Each fidelity claim names the test
+that proves it.
+</li><li> <strong class="strong">Untrusted by default.</strong>  Every byte of a WAD, demo, or save is
+parsed with checked bounds into typed errors.
+</li></ol>
+
+<hr>
+</div>
+<div class="chapter-level-extent" id="Architecture">
+<div class="nav-panel">
+<p>
+Next: <a href="#Interfaces" accesskey="n" rel="next">Interfaces</a>, Previous: <a href="#Principles" accesskey="p" rel="prev">Principles</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Architecture-1"><span>7 Architecture<a class="copiable-link" href="#Architecture-1"> &para;</a></span></h2>
+
+
+<ul class="mini-toc">
+<li><a href="#Porting-Strategy" accesskey="1">Porting Strategy</a></li>
+<li><a href="#Crate-Layout" accesskey="2">Crate Layout</a></li>
+<li><a href="#State-Ownership" accesskey="3">State Ownership</a></li>
+<li><a href="#Concurrency-Model" accesskey="4">Concurrency Model</a></li>
+<li><a href="#Rendering" accesskey="5">Rendering</a></li>
+<li><a href="#Audio" accesskey="6">Audio</a></li>
+<li><a href="#Platform-and-Files" accesskey="7">Platform and Files</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Porting-Strategy">
+<div class="nav-panel">
+<p>
+Next: <a href="#Crate-Layout" accesskey="n" rel="next">Crate Layout</a>, Up: <a href="#Architecture" accesskey="u" rel="up">Architecture</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Porting-Strategy-1"><span>7.1 Porting Strategy<a class="copiable-link" href="#Porting-Strategy-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-transliteration"></a>
+<a class="index-entry-id" id="index-porting-strategy"></a>
+<p>Phobos uses <strong class="strong">manual transliteration</strong> (porting reference,
+strategy 3).  Game-logic files (<samp class="file">p_*</samp>, <samp class="file">g_game</samp>, <samp class="file">info</samp>,
+<samp class="file">tables</samp>, <samp class="file">m_random</samp>, <samp class="file">m_fixed</samp>) keep their function
+boundaries and call order, so a diff against <code class="code">linuxdoom-1.10</code>
+stays readable and the random-number call sequence is preserved.
+Rendering (<samp class="file">r_*</samp>), video (<samp class="file">v_video</samp>), and the front end
+(<samp class="file">st_*</samp>, <samp class="file">hu_*</samp>, <samp class="file">am_map</samp>, <samp class="file">m_menu</samp>,
+<samp class="file">wi_stuff</samp>, <samp class="file">f_finale</samp>) keep their algorithms but use
+idiomatic data structures.  Platform code (<samp class="file">i_*</samp>) is rewritten
+from scratch.
+</p>
+<a class="index-entry-id" id="index-doomgeneric"></a>
+<a class="index-entry-id" id="index-c2rust"></a>
+<p>The other two strategies were rejected:
+</p>
+<ul class="itemize mark-bullet">
+<li>A <code class="code">doomgeneric</code> shim plays on day one but keeps C in the tree
+until the end, which NG-7 forbids.
+</li><li><code class="code">c2rust</code> output carries C&rsquo;s global-pointer shape into thousands of
+<code class="code">unsafe</code> blocks.  Goal G3 would then mean refactoring the whole
+tree a second time.
+</li></ul>
+
+<a class="index-entry-id" id="index-Chocolate-Doom"></a>
+<p>Kreimeier&rsquo;s pre-release cleanup of the source added a few bugs.
+Chocolate Doom documents the corrections.  The port follows Chocolate
+Doom&rsquo;s corrected behaviour and credits it in <samp class="file">CREDITS.md</samp>
+(§15.3, OQ-4).
+</p>
+<hr>
+</div>
+<div class="section-level-extent" id="Crate-Layout">
+<div class="nav-panel">
+<p>
+Next: <a href="#State-Ownership" accesskey="n" rel="next">State Ownership</a>, Previous: <a href="#Porting-Strategy" accesskey="p" rel="prev">Porting Strategy</a>, Up: <a href="#Architecture" accesskey="u" rel="up">Architecture</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Crate-Layout-1"><span>7.2 Crate Layout<a class="copiable-link" href="#Crate-Layout-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-crates"></a>
+<div class="example">
+<pre class="example-preformatted">phobos/
++-- crates/
+|   +-- phobos-fixed/    Fixed (16.16), Angle (BAM), trig tables, P_Random
+|   +-- phobos-wad/      WAD reader, IWAD identification, lump namespace
+|   +-- phobos-data/     Map, texture, patch, flat, sprite, sound decoding
+|   +-- phobos-sim/      Deterministic game simulation (forbid unsafe)
+|   +-- phobos-game/     Game flow: modes, missions, demos, saves, cheats
+|   +-- phobos-render/   Software renderer to an 8-bit framebuffer
+|   +-- phobos-ui/       Status bar, HUD, automap, menus, intermission, finales
+|   +-- phobos-audio/    Mixer, SFX, MUS sequencer, OPL backend
+|   +-- phobos-gpu/      wgpu presenter (M3) and enhanced renderer (M8)
+|   +-- phobos-app/      winit event loop, CLI, config, input mapping
+|   +-- phobos-tools/    phobos-tools wad|demo|map inspection and CI checks
++-- fuzz/                cargo-fuzz targets
+</pre></div>
+
+<p>Dependency rules, enforced by <code class="code">cargo deny</code> bans and checked at
+review:
+</p>
+<ul class="itemize mark-bullet">
+<li><code class="code">phobos-sim</code> depends only on <code class="code">phobos-fixed</code> and
+<code class="code">phobos-data</code>.
+</li><li>No renderer depends on <code class="code">phobos-wad</code>.  Renderers receive decoded
+resources.
+</li><li>Only <code class="code">phobos-app</code> and <code class="code">phobos-gpu</code> depend on windowing or GPU
+crates.
+</li></ul>
+
+<hr>
+</div>
+<div class="section-level-extent" id="State-Ownership">
+<div class="nav-panel">
+<p>
+Next: <a href="#Concurrency-Model" accesskey="n" rel="next">Concurrency Model</a>, Previous: <a href="#Crate-Layout" accesskey="p" rel="prev">Crate Layout</a>, Up: <a href="#Architecture" accesskey="u" rel="up">Architecture</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="State-Ownership-1"><span>7.3 State Ownership<a class="copiable-link" href="#State-Ownership-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-global-state"></a>
+<a class="index-entry-id" id="index-thinkers"></a>
+<p>The C engine keeps its state in mutable globals.  Phobos keeps it in
+owned structs passed down the call tree:
+</p>
+<ul class="itemize mark-bullet">
+<li><code class="code">Level</code> owns the map geometry, sectors, lines, blockmap, and
+reject table.
+</li><li><code class="code">World</code> owns the <code class="code">Level</code>, the thinker arena, the players, and
+the random indices.  A tic is
+<code class="code">fn tick(&amp;mut World, &amp;[TicCmd; MAXPLAYERS])</code>.
+</li><li><strong class="strong">Thinkers</strong> live in an arena addressed by generational handles.
+An index-linked list inside the arena keeps the vanilla insertion and
+iteration order.  That order decides the random-call sequence, so demo
+sync depends on it.  Pointer fields such as <code class="code">mobj_t.target</code> and
+<code class="code">tracer</code> become <code class="code">Option&lt;MobjHandle&gt;</code>.  A handle to a removed
+thing resolves to <code class="code">None</code>.  In C, the same case reads freed memory
+that the zone allocator had not yet reused.  The port reproduces that
+observable result explicitly.
+</li><li>Sector thing lists and blockmap links keep their vanilla link order,
+for the same reason.
+</li><li>The arithmetic overflows that vanilla relies on use <code class="code">wrapping_*</code>
+operations explicitly.  <code class="code">overflow-checks = true</code> stays on in test
+profiles so that any accidental overflow fails.
+</li></ul>
+
+<hr>
+</div>
+<div class="section-level-extent" id="Concurrency-Model">
+<div class="nav-panel">
+<p>
+Next: <a href="#Rendering" accesskey="n" rel="next">Rendering</a>, Previous: <a href="#State-Ownership" accesskey="p" rel="prev">State Ownership</a>, Up: <a href="#Architecture" accesskey="u" rel="up">Architecture</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Concurrency-Model-1"><span>7.4 Concurrency Model<a class="copiable-link" href="#Concurrency-Model-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-concurrency"></a>
+<a class="index-entry-id" id="index-Amdahl_0027s-law"></a>
+<table class="multitable">
+<thead><tr><th width="20%">Work</th><th width="28%">Model</th><th width="52%">Decision and trade-off</th></tr></thead>
+<tbody><tr><td width="20%">Simulation tic</td><td width="28%">Serial, one thread</td><td width="52%">Determinism needs one exact order of random calls and thinker
+updates.  A tic costs well under 1 ms, so by Amdahl&rsquo;s law parallelism
+could save almost nothing and would risk desync.  Serial is chosen and
+documented here.</td></tr>
+<tr><td width="20%">Event loop and presentation</td><td width="28%">winit main thread</td><td width="52%">winit requires the main thread on several platforms.  Frames go
+from the game thread to the presenter through a triple buffer, so
+neither side waits for the other.</td></tr>
+<tr><td width="20%">Software renderer</td><td width="28%">Serial at 320x200.  Optional banded parallel drawing with Rayon at
+2x and 4x scale (R-056)</td><td width="52%">BSP traversal is serial by nature.  Column and span drawing for
+screen bands can run in parallel once clipping is done.  Adopted only
+if a benchmark shows a gain over serial at that scale.</td></tr>
+<tr><td width="20%">Audio mixing and OPL synthesis</td><td width="28%">cpal callback thread</td><td width="52%">The simulation sends sound commands over a bounded lock-free SPSC
+queue and never blocks.  If the queue is full, the oldest command is
+dropped and counted.</td></tr>
+<tr><td width="20%">Level load</td><td width="28%">Rayon over textures</td><td width="52%">Texture compositing and patch decoding are embarrassingly
+parallel.  Kept only if it beats serial on the reference machine.</td></tr>
+<tr><td width="20%">Demo corpus in CI</td><td width="28%">One process per demo</td><td width="52%">Shared-nothing parallelism over the corpus.</td></tr>
+</tbody>
+</table>
+
+<hr>
+</div>
+<div class="section-level-extent" id="Rendering">
+<div class="nav-panel">
+<p>
+Next: <a href="#Audio" accesskey="n" rel="next">Audio</a>, Previous: <a href="#Concurrency-Model" accesskey="p" rel="prev">Concurrency Model</a>, Up: <a href="#Architecture" accesskey="u" rel="up">Architecture</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Rendering-1"><span>7.5 Rendering<a class="copiable-link" href="#Rendering-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-software-renderer"></a>
+<a class="index-entry-id" id="index-wgpu"></a>
+<dl class="table">
+<dt>Software renderer (reference, M3)</dt>
+<dd><p>A port of <samp class="file">r_*.c</samp> that writes palette indices to a 320x200
+framebuffer (or 2x / 4x scale, optional).  Colour maps, light
+diminishing, fuzz, sky, masked mid-textures, and sprite clipping follow
+vanilla.  Vanilla render limits (visplanes, drawsegs, vissprites) are
+enforced by default and overflow into a logged, non-fatal fallback.
+Vanilla crashes in this case; Phobos does not.  A limit-removing mode
+is optional (R-085).
+</p>
+</dd>
+<dt>Presenter (M3)</dt>
+<dd><p>The indexed frame is uploaded to a wgpu texture.  A small WGSL shader
+expands it through <code class="code">PLAYPAL</code> and applies palette flashes.  The
+output is scaled to 4:3 aspect, with integer scaling as an option.  If
+no GPU adapter is available, a <code class="code">softbuffer</code> CPU path is used.
+</p>
+</dd>
+<dt>Enhanced renderer (M8)</dt>
+<dd><p>A wgpu renderer reads the same <code class="code">RenderSnapshot</code>.  It stores static
+level geometry in GPU buffers, draws sprites with instancing, and
+applies colour-map lighting in the shader.  Dynamic lights,
+post-processing, and ray-traced effects are optional.  Its output is
+checked against the software renderer on golden scenes.
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="Audio">
+<div class="nav-panel">
+<p>
+Next: <a href="#Platform-and-Files" accesskey="n" rel="next">Platform and Files</a>, Previous: <a href="#Rendering" accesskey="p" rel="prev">Rendering</a>, Up: <a href="#Architecture" accesskey="u" rel="up">Architecture</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Audio-1"><span>7.6 Audio<a class="copiable-link" href="#Audio-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-audio"></a>
+<a class="index-entry-id" id="index-OPL"></a>
+<dl class="table">
+<dt>Sound effects</dt>
+<dd><p>DMX <code class="code">DS*</code> lumps are decoded and resampled to the output rate.
+There are 8 channels, using vanilla&rsquo;s priority and channel-stealing
+rules, distance attenuation, and stereo separation (<samp class="file">s_sound.c</samp>).
+</p>
+</dd>
+<dt>Music</dt>
+<dd><p>The <code class="code">MUS</code> sequencer drives an OPL3 emulator voiced from the IWAD&rsquo;s
+<code class="code">GENMIDI</code> bank, the vanilla sound.  Candidate crate:
+<code class="code">nuked-opl3</code>, a pure-Rust port.  It is at 0.1.0 and needs the §24
+audit before adoption.  SoundFont MIDI is optional.
+</p>
+</dd>
+<dt>Degraded mode</dt>
+<dd><p>If no audio device is available, the game runs silent and logs one
+warning.
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="Platform-and-Files">
+<div class="nav-panel">
+<p>
+Previous: <a href="#Audio" accesskey="p" rel="prev">Audio</a>, Up: <a href="#Architecture" accesskey="u" rel="up">Architecture</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Platform-and-Files-1"><span>7.7 Platform and Files<a class="copiable-link" href="#Platform-and-Files-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-XDG"></a>
+<a class="index-entry-id" id="index-privacy"></a>
+<ul class="itemize mark-bullet">
+<li>Windowing and input use winit.  Gamepads use gilrs (optional).
+</li><li>File locations follow XDG.  Configuration goes in
+<samp class="file">$XDG_CONFIG_HOME/phobos/phobos.toml</samp>; saves and demos in
+<samp class="file">$XDG_DATA_HOME/phobos/</samp>.
+</li><li>IWAD search order: <code class="code">-iwad</code>, <code class="env">DOOMWADDIR</code>, <code class="env">DOOMWADPATH</code>,
+the XDG data directories plus <samp class="file">doom/</samp>, then the current directory.
+</li><li>No network access in any build (§9).
+</li><li>The engine uses no fonts of its own except on the no-IWAD screen and
+the debug overlay.  Those use bundled Share Tech Mono / Inconsolata
+(OFL, §12) and the <code class="code">steelbore</code> theme (§11, §11.6).  In-game menus
+and HUD use IWAD graphics.
+</li></ul>
+
+<hr>
+</div>
+</div>
+<div class="chapter-level-extent" id="Interfaces">
+<div class="nav-panel">
+<p>
+Next: <a href="#Verification" accesskey="n" rel="next">Verification</a>, Previous: <a href="#Architecture" accesskey="p" rel="prev">Architecture</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Interfaces-1"><span>8 Interfaces<a class="copiable-link" href="#Interfaces-1"> &para;</a></span></h2>
+
+
+<ul class="mini-toc">
+<li><a href="#Command-Line" accesskey="1">Command Line</a></li>
+<li><a href="#Configuration" accesskey="2">Configuration</a></li>
+<li><a href="#Data-Formats" accesskey="3">Data Formats</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Command-Line">
+<div class="nav-panel">
+<p>
+Next: <a href="#Configuration" accesskey="n" rel="next">Configuration</a>, Up: <a href="#Interfaces" accesskey="u" rel="up">Interfaces</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Command-Line-1"><span>8.1 Command Line<a class="copiable-link" href="#Command-Line-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-command-line"></a>
+<p>Vanilla single-dash arguments are accepted as written.  GNU-style long
+forms are accepted alongside them.  <samp class="option">--help</samp> and
+<samp class="option">--version</samp> follow <code class="code">spacecraft-cli-standard</code>, and
+<samp class="option">--version</samp> carries the §15 attribution.
+</p>
+<dl class="table">
+<dt><code class="code">-iwad <var class="var">file</var></code></dt>
+<dd><p>Select IWAD.
+</p></dd>
+<dt><code class="code">-file <var class="var">files&hellip;</var></code></dt>
+<dd><p>Load PWADs with vanilla override rules.
+</p></dd>
+<dt><code class="code">-deh <var class="var">files&hellip;</var></code></dt>
+<dd><p>Load DeHackEd patches (M7).
+</p></dd>
+<dt><code class="code">-warp <var class="var">e</var> <var class="var">m</var></code></dt>
+<dt><code class="code">-warp <var class="var">map</var></code></dt>
+<dd><p>Start at a map.
+</p></dd>
+<dt><code class="code">-skill <var class="var">1--5</var></code></dt>
+<dd><p>Skill level.
+</p></dd>
+<dt><code class="code">-nomonsters</code></dt>
+<dt><code class="code">-fast</code></dt>
+<dt><code class="code">-respawn</code></dt>
+<dd><p>Gameplay switches.
+</p></dd>
+<dt><code class="code">-gameversion <var class="var">v</var></code></dt>
+<dd><p><code class="code">1.9</code>, <code class="code">ultimate</code>, <code class="code">final</code>, <code class="code">final2</code>.
+</p></dd>
+<dt><code class="code">-record <var class="var">file</var></code></dt>
+<dt><code class="code">-playdemo <var class="var">file</var></code></dt>
+<dt><code class="code">-timedemo <var class="var">file</var></code></dt>
+<dd><p>Demo record, playback, benchmark.
+</p></dd>
+<dt><code class="code">-statdump <var class="var">file</var></code></dt>
+<dd><p>Write level statistics in Chocolate Doom format.
+</p></dd>
+<dt><code class="code">-width</code></dt>
+<dt><code class="code">-height</code></dt>
+<dt><code class="code">-fullscreen</code></dt>
+<dt><code class="code">-window</code></dt>
+<dd><p>Display.
+</p></dd>
+<dt><code class="code">-config <var class="var">file</var></code></dt>
+<dd><p>Alternate configuration.
+</p></dd>
+</dl>
+
+<a class="index-entry-id" id="index-phobos_002dtools"></a>
+<p><code class="code">phobos-tools</code> is non-interactive and supports <samp class="option">--json</samp>:
+<code class="code">wad ls</code>, <code class="code">wad identify</code>, <code class="code">demo check</code>, <code class="code">demo diff</code>,
+<code class="code">map stats</code>.  CI and agents use it.
+</p>
+<hr>
+</div>
+<div class="section-level-extent" id="Configuration">
+<div class="nav-panel">
+<p>
+Next: <a href="#Data-Formats" accesskey="n" rel="next">Data Formats</a>, Previous: <a href="#Command-Line" accesskey="p" rel="prev">Command Line</a>, Up: <a href="#Interfaces" accesskey="u" rel="up">Interfaces</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Configuration-1"><span>8.2 Configuration<a class="copiable-link" href="#Configuration-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-configuration"></a>
+<p>TOML with sections <code class="code">[video]</code>, <code class="code">[audio]</code>, <code class="code">[input]</code>,
+<code class="code">[gameplay]</code>, <code class="code">[compat]</code>, <code class="code">[debug]</code>.  An unknown key is
+warned about and ignored.  A missing or invalid value falls back to the
+default with a warning.  A malformed file never stops the game from
+starting.
+</p>
+<hr>
+</div>
+<div class="section-level-extent" id="Data-Formats">
+<div class="nav-panel">
+<p>
+Previous: <a href="#Configuration" accesskey="p" rel="prev">Configuration</a>, Up: <a href="#Interfaces" accesskey="u" rel="up">Interfaces</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Data-Formats-1"><span>8.3 Data Formats<a class="copiable-link" href="#Data-Formats-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-demo-format"></a>
+<a class="index-entry-id" id="index-savegame"></a>
+<p>WAD (IWAD, PWAD), vanilla demo <samp class="file">.lmp</samp> (version byte 109 and the
+earlier versions the selected game version implies), DeHackEd
+<samp class="file">.deh</samp> / <code class="code">DEHACKED</code> lump (M7), Phobos native saves
+(versioned), and optionally vanilla <samp class="file">.dsg</samp> saves.  All are
+untrusted input.
+</p>
+<hr>
+</div>
+</div>
+<div class="chapter-level-extent" id="Verification">
+<div class="nav-panel">
+<p>
+Next: <a href="#Compliance" accesskey="n" rel="next">Standard Compliance</a>, Previous: <a href="#Interfaces" accesskey="p" rel="prev">Interfaces</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Verification-1"><span>9 Verification<a class="copiable-link" href="#Verification-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-verification"></a>
+<a class="index-entry-id" id="index-statcheck"></a>
+<p>Category D owes a smoke test (§21.2).  Fidelity is the product, so
+Phobos sets a higher bar for itself.  This is a choice, not a Standard
+obligation.
+</p>
+<table class="multitable">
+<thead><tr><th width="22%">Layer</th><th width="50%">Evidence</th><th width="28%">Runs in</th></tr></thead>
+<tbody><tr><td width="22%">Fixed point, tables, random</td><td width="50%">Unit tests against values from the C source; property tests on
+wrapping</td><td width="28%">CI</td></tr>
+<tr><td width="22%">WAD, map, patch, demo, save, DeHackEd parsers</td><td width="50%">Unit tests plus <code class="code">cargo-fuzz</code> targets; no panic, no unbounded
+allocation</td><td width="28%">CI (time-boxed fuzz)</td></tr>
+<tr><td width="22%">Simulation</td><td width="50%">Per-tic <code class="code">World</code> checksum; golden traces for scripted sequences
+(movement, doors, weapons, monsters)</td><td width="28%">CI</td></tr>
+<tr><td width="22%">Demo fidelity</td><td width="50%">Built-in demos and a demo corpus: <code class="code">-statdump</code> output compared
+to Chocolate Doom built out of tree from a pinned commit (statcheck
+method)</td><td width="28%">CI on Freedoom and <samp class="file">doom1.wad</samp>; locally on commercial IWADs</td></tr>
+<tr><td width="22%">Renderer</td><td width="50%">Headless render-to-PNG golden frames at fixed tics</td><td width="28%">CI</td></tr>
+<tr><td width="22%">GPU</td><td width="50%">wgpu validation on; headless adapter where available</td><td width="28%">CI where possible</td></tr>
+<tr><td width="22%">Performance</td><td width="50%">Criterion benchmarks; <code class="code">-timedemo</code></td><td width="28%">CI sample, full run before releases</td></tr>
+</tbody>
+</table>
+
+
+<ul class="mini-toc">
+<li><a href="#Performance-Targets" accesskey="1">Performance Targets</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="Performance-Targets">
+<div class="nav-panel">
+<p>
+Up: <a href="#Verification" accesskey="u" rel="up">Verification</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="Performance-Targets-1"><span>9.1 Performance Targets<a class="copiable-link" href="#Performance-Targets-1"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-performance-targets"></a>
+<p>Category D has no §22 budget obligation.  These targets guide the work
+and gate optimisation decisions.  The reference machine is still to be
+chosen (OQ-3).
+</p>
+<table class="multitable">
+<thead><tr><th width="65%">Measure</th><th width="35%">Target</th></tr></thead>
+<tbody><tr><td width="65%">Tic simulation, 99th percentile, MAP30 (Doom II)</td><td width="35%">&le; 1 ms</td></tr>
+<tr><td width="65%">Software frame, 320x200</td><td width="35%">&le; 1 ms</td></tr>
+<tr><td width="65%">Software frame, 4x scale (1280x800)</td><td width="35%">&le; 6 ms</td></tr>
+<tr><td width="65%">Map load, largest commercial map</td><td width="35%">&le; 250 ms</td></tr>
+<tr><td width="65%">Resident memory, any commercial IWAD</td><td width="35%">&le; 256 MiB</td></tr>
+<tr><td width="65%">Added input latency</td><td width="35%">No sleep beyond vsync and frame pacing</td></tr>
+</tbody>
+</table>
+
+<hr>
+</div>
+</div>
+<div class="chapter-level-extent" id="Compliance">
+<div class="nav-panel">
+<p>
+Next: <a href="#Milestones" accesskey="n" rel="next">Milestones</a>, Previous: <a href="#Verification" accesskey="p" rel="prev">Verification</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Standard-Compliance"><span>10 Standard Compliance<a class="copiable-link" href="#Standard-Compliance"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-Steelbore-Standard"></a>
+<a class="index-entry-id" id="index-compliance"></a>
+<table class="multitable">
+<thead><tr><th width="14%">§</th><th width="16%">Applies</th><th width="70%">How Phobos satisfies it</th></tr></thead>
+<tbody><tr><td width="14%">§2</td><td width="16%">Yes</td><td width="70%">Codename Phobos (Mars&rsquo;s moon; astronomy domain),
+approved 2026-10-27.</td></tr>
+<tr><td width="14%">§3.1</td><td width="16%">Yes</td><td width="70%">Rust; <code class="code">#![forbid(unsafe_code)]</code> in
+<code class="code">phobos-fixed</code>, <code class="code">phobos-wad</code>, <code class="code">phobos-data</code>,
+<code class="code">phobos-sim</code>, <code class="code">phobos-game</code>; typed errors; no <code class="code">unwrap</code> on
+input.</td></tr>
+<tr><td width="14%">§3.2</td><td width="16%">Yes</td><td width="70%">Concurrency model (see <a class="pxref" href="#Concurrency-Model">Concurrency Model</a>);
+serial simulation documented; release flags noted in <samp class="file">Cargo.toml</samp>.</td></tr>
+<tr><td width="14%">§3.3</td><td width="16%">Partly</td><td width="70%">No network, no privilege, no crypto; PQC is N/A.</td></tr>
+<tr><td width="14%">§4</td><td width="16%">Yes</td><td width="70%">GPL-3.0-or-later; inherited GPL-2.0-or-later
+notices kept verbatim; REUSE; <samp class="file">LICENSES/</samp>.</td></tr>
+<tr><td width="14%">§5.2</td><td width="16%">Yes</td><td width="70%">Posture files (R-002).</td></tr>
+<tr><td width="14%">§5.5</td><td width="16%">Yes</td><td width="70%"><samp class="file">packaging/guix.scm</samp>, <samp class="file">default.nix</samp>,
+<samp class="file">PKGBUILD</samp> (R-079).</td></tr>
+<tr><td width="14%">§5.7</td><td width="16%">Yes</td><td width="70%"><samp class="file">AGENTS.md</samp> and <samp class="file">CLAUDE.md</samp> (R-003).</td></tr>
+<tr><td width="14%">§6.3, §6.4</td><td width="16%">Yes</td><td width="70%">Signed commits; no upstream contributions
+to Chocolate Doom or others without per-contribution approval.</td></tr>
+<tr><td width="14%">§6.5</td><td width="16%">Yes</td><td width="70%"><samp class="file">.gitattributes</samp>, <samp class="file">.editorconfig</samp> (R-005).</td></tr>
+<tr><td width="14%">§8</td><td width="16%">Yes</td><td width="70%"><samp class="file">doc/phobos.texi</samp> (R-078).</td></tr>
+<tr><td width="14%">§9</td><td width="16%">Yes</td><td width="70%">No network, no telemetry, local files only, no
+third-party subresources at run time.</td></tr>
+<tr><td width="14%">§10, §18</td><td width="16%">No</td><td width="70%">Game carve-out §18.5.  Adopted anyway from
+§18.5.2: remappable controls, and no capture of <kbd class="key">Insert</kbd> or
+<kbd class="key">CapsLock</kbd>.</td></tr>
+<tr><td width="14%">§11, §11.6</td><td width="16%">Chrome only</td><td width="70%">No-IWAD screen, debug overlay,
+launcher messages.  The game world uses <code class="code">PLAYPAL</code>.</td></tr>
+<tr><td width="14%">§12</td><td width="16%">Yes</td><td width="70%">Bundled OFL fonts for chrome text.</td></tr>
+<tr><td width="14%">§13</td><td width="16%">Tailored</td><td width="70%">Menus are IWAD-native vanilla menus, not a
+component system; recorded in the README register.</td></tr>
+<tr><td width="14%">§14</td><td width="16%">Yes</td><td width="70%">ISO 8601 UTC in save metadata, logs, statdump
+headers.</td></tr>
+<tr><td width="14%">§15</td><td width="16%">Yes</td><td width="70%"><samp class="option">--version</samp>, README, <samp class="file">CREDITS.md</samp>
+(id Software, Chocolate Doom, room4doom if code is adapted, Freedoom).</td></tr>
+<tr><td width="14%">§17</td><td width="16%">Yes</td><td width="70%"><samp class="file">PRD.md</samp> follows §17.5.</td></tr>
+<tr><td width="14%">§19</td><td width="16%">Yes</td><td width="70%">Category D declared in README, AGENTS.md,
+PROJECTS.md.</td></tr>
+<tr><td width="14%">§20&ndash;§23, §25</td><td width="16%">None owed</td><td width="70%">Category D.</td></tr>
+<tr><td width="14%">§24</td><td width="16%">Audit tooling</td><td width="70%"><code class="code">cargo audit</code>, <code class="code">cargo deny</code>
+in CI; SBOM per release (R-077).</td></tr>
+<tr><td width="14%">§26</td><td width="16%">Yes</td><td width="70%"><samp class="file">SECURITY.md</samp> (R-010).</td></tr>
+</tbody>
+</table>
+
+<hr>
+</div>
+<div class="chapter-level-extent" id="Milestones">
+<div class="nav-panel">
+<p>
+Next: <a href="#Risks" accesskey="n" rel="next">Risks</a>, Previous: <a href="#Compliance" accesskey="p" rel="prev">Standard Compliance</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Milestones-1"><span>11 Milestones<a class="copiable-link" href="#Milestones-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-milestones"></a>
+<a class="index-entry-id" id="index-progress-tracking"></a>
+<p>The MVP is M0&ndash;M5, delivering Phobos v0.1.  Each item carries a
+permanent identifier.  An item is required unless marked
+<em class="emph">optional</em>; optional items never count toward progress.  As of
+2026-10-27 no item is complete.  Completion is ticked in
+<samp class="file">PRD.md</samp>, which is the tracking document; this chapter mirrors its
+scope.
+</p>
+
+<ul class="mini-toc">
+<li><a href="#M0" accesskey="1">M0 &mdash; Foundation and compliance</a></li>
+<li><a href="#M1" accesskey="2">M1 &mdash; WAD and resource layer</a></li>
+<li><a href="#M2" accesskey="3">M2 &mdash; Deterministic simulation core</a></li>
+<li><a href="#M3" accesskey="4">M3 &mdash; Classic renderer and front end</a></li>
+<li><a href="#M4" accesskey="5">M4 &mdash; Sound and music</a></li>
+<li><a href="#M5" accesskey="6">M5 &mdash; Demos, saves and fidelity gate</a></li>
+<li><a href="#M6" accesskey="7">M6 &mdash; Release engineering v1.0</a></li>
+<li><a href="#M7" accesskey="8">M7 &mdash; Vanilla modding extensions</a></li>
+<li><a href="#M8" accesskey="9">M8 &mdash; Enhanced GPU renderer</a></li>
+</ul>
+<hr>
+<div class="section-level-extent" id="M0">
+<div class="nav-panel">
+<p>
+Next: <a href="#M1" accesskey="n" rel="next">M1 &mdash; WAD and resource layer</a>, Up: <a href="#Milestones" accesskey="u" rel="up">Milestones</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="M0-_002d_002d_002d-Foundation-and-compliance"><span>11.1 M0 &mdash; Foundation and compliance<a class="copiable-link" href="#M0-_002d_002d_002d-Foundation-and-compliance"> &para;</a></span></h3>
+
+<dl class="table">
+<dt><code class="code">R-001</code></dt>
+<dd><p>Cargo workspace with <samp class="file">rust-toolchain.toml</samp> and committed
+<samp class="file">Cargo.lock</samp>.
+</p></dd>
+<dt><code class="code">R-002</code></dt>
+<dd><p>Posture files: <samp class="file">README.md</samp> (posture, game declaration, Category D,
+conformance claim), <samp class="file">NOTICE.md</samp>, <samp class="file">CONTRIBUTING.md</samp>,
+<samp class="file">LICENSE</samp>, <samp class="file">LICENSES/</samp>.
+</p></dd>
+<dt><code class="code">R-003</code></dt>
+<dd><p><samp class="file">AGENTS.md</samp> and <samp class="file">CLAUDE.md</samp> per §5.7.
+</p></dd>
+<dt><code class="code">R-004</code></dt>
+<dd><p>REUSE headers on every file; <code class="code">reuse lint</code> gates CI.
+</p></dd>
+<dt><code class="code">R-005</code></dt>
+<dd><p><samp class="file">.gitattributes</samp> and <samp class="file">.editorconfig</samp> per §6.5; CI rejects CR
+bytes.
+</p></dd>
+<dt><code class="code">R-006</code></dt>
+<dd><p>CI runs <code class="code">cargo fmt --check</code>,
+<code class="code">cargo clippy --all-targets --all-features --locked -- -D warnings</code>,
+tests, doc tests, <code class="code">cargo audit</code>, <code class="code">cargo deny</code>.
+</p></dd>
+<dt><code class="code">R-007</code></dt>
+<dd><p>Codename Phobos registered in <samp class="file">PROJECTS.md</samp>, the §2.1 registry,
+and the §18.5 games registry.
+</p></dd>
+<dt><code class="code">R-008</code></dt>
+<dd><p>&ldquo;Or later&rdquo; grant verified against the GPL source release headers and
+recorded in <samp class="file">NOTICE.md</samp>.
+</p></dd>
+<dt><code class="code">R-009</code></dt>
+<dd><p><samp class="file">CREDITS.md</samp> listing id Software, Chocolate Doom, Freedoom, and
+prior Rust art consulted.
+</p></dd>
+<dt><code class="code">R-010</code></dt>
+<dd><p><samp class="file">SECURITY.md</samp> with reporting channel and support window.
+</p></dd>
+<dt><code class="code">R-011</code></dt>
+<dd><p>Chocolate Doom oracle built reproducibly out of tree (Nix, pinned
+commit), used by CI only.
+</p></dd>
+<dt><code class="code">R-012</code></dt>
+<dd><p>CI fetches Freedoom and shareware <samp class="file">doom1.wad</samp> by pinned SHA-256.
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="M1">
+<div class="nav-panel">
+<p>
+Next: <a href="#M2" accesskey="n" rel="next">M2 &mdash; Deterministic simulation core</a>, Previous: <a href="#M0" accesskey="p" rel="prev">M0 &mdash; Foundation and compliance</a>, Up: <a href="#Milestones" accesskey="u" rel="up">Milestones</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="M1-_002d_002d_002d-WAD-and-resource-layer"><span>11.2 M1 &mdash; WAD and resource layer<a class="copiable-link" href="#M1-_002d_002d_002d-WAD-and-resource-layer"> &para;</a></span></h3>
+
+<dl class="table">
+<dt><code class="code">R-013</code></dt>
+<dd><p>WAD reader with checked bounds; malformed input yields a typed error
+and never panics.
+</p></dd>
+<dt><code class="code">R-014</code></dt>
+<dd><p>IWAD identification for all eight target IWADs by lump signature.
+</p></dd>
+<dt><code class="code">R-015</code></dt>
+<dd><p>IWAD search in the documented order.
+</p></dd>
+<dt><code class="code">R-016</code></dt>
+<dd><p>PWAD loading with vanilla <code class="code">-file</code> override semantics.
+</p></dd>
+<dt><code class="code">R-017</code></dt>
+<dd><p>Map lumps decoded: THINGS, LINEDEFS, SIDEDEFS, VERTEXES, SEGS, SSECTORS,
+NODES, SECTORS, REJECT, BLOCKMAP.
+</p></dd>
+<dt><code class="code">R-018</code></dt>
+<dd><p>Graphics decoded: PLAYPAL, COLORMAP, PNAMES, TEXTURE1/2, patches,
+flats, sprites, ENDOOM.
+</p></dd>
+<dt><code class="code">R-019</code></dt>
+<dd><p>Sound lumps decoded: DS*, DP*, D_* (MUS), GENMIDI.
+</p></dd>
+<dt><code class="code">R-020</code></dt>
+<dd><p>Fuzz targets for WAD, map, patch, and texture decoding.
+</p></dd>
+<dt><code class="code">R-021</code></dt>
+<dd><p><code class="code">phobos-tools wad ls</code> and <code class="code">wad identify</code> with
+<samp class="option">--json</samp>.
+</p></dd>
+<dt><code class="code">R-022</code></dt>
+<dd><p>PWAD sprite and flat merging (<code class="code">-merge</code>).  <em class="emph">Optional.</em>
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="M2">
+<div class="nav-panel">
+<p>
+Next: <a href="#M3" accesskey="n" rel="next">M3 &mdash; Classic renderer and front end</a>, Previous: <a href="#M1" accesskey="p" rel="prev">M1 &mdash; WAD and resource layer</a>, Up: <a href="#Milestones" accesskey="u" rel="up">Milestones</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="M2-_002d_002d_002d-Deterministic-simulation-core"><span>11.3 M2 &mdash; Deterministic simulation core<a class="copiable-link" href="#M2-_002d_002d_002d-Deterministic-simulation-core"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-fixed_002dpoint"></a>
+<a class="index-entry-id" id="index-P_005fRandom"></a>
+<dl class="table">
+<dt><code class="code">R-023</code></dt>
+<dd><p>16.16 <code class="code">Fixed</code> and BAM <code class="code">Angle</code> with bit-exact
+<code class="code">FixedMul</code> and <code class="code">FixedDiv</code>, including the overflow branch.
+</p></dd>
+<dt><code class="code">R-024</code></dt>
+<dd><p><code class="code">finesine</code>, <code class="code">finetangent</code>, <code class="code">tantoangle</code> tables carried
+verbatim.
+</p></dd>
+<dt><code class="code">R-025</code></dt>
+<dd><p><code class="code">P_Random</code> and <code class="code">M_Random</code> from the 256-entry table with
+separate indices.
+</p></dd>
+<dt><code class="code">R-026</code></dt>
+<dd><p>Fixed 35 Hz tic driven by <code class="code">TicCmd</code>; simulation crates contain no
+floating point and no clock reads (enforced by lint).
+</p></dd>
+<dt><code class="code">R-027</code></dt>
+<dd><p>Thinker arena with generational handles that preserves vanilla
+iteration order.
+</p></dd>
+<dt><code class="code">R-028</code></dt>
+<dd><p><code class="code">mobjinfo</code>, <code class="code">states</code>, and sprite tables for the full Doom II
+set.
+</p></dd>
+<dt><code class="code">R-029</code></dt>
+<dd><p>Player movement, collision, sliding, and use-line traversal.
+</p></dd>
+<dt><code class="code">R-030</code></dt>
+<dd><p>All nine weapons and player sprite states, including the super shotgun.
+</p></dd>
+<dt><code class="code">R-031</code></dt>
+<dd><p>Monster action functions for all Doom and Doom II monsters.
+</p></dd>
+<dt><code class="code">R-032</code></dt>
+<dd><p>Line and sector specials: doors, plats, floors, ceilings, crushers,
+lights, switches, teleports, donuts, stairs.
+</p></dd>
+<dt><code class="code">R-033</code></dt>
+<dd><p>Level triggers for E1M8, E2M8, E3M8, E4M6, E4M8, MAP07, and the MAP30
+boss brain.
+</p></dd>
+<dt><code class="code">R-034</code></dt>
+<dd><p>Game mode and mission selection with episode and map progression,
+including secret exits to MAP31 and MAP32.
+</p></dd>
+<dt><code class="code">R-035</code></dt>
+<dd><p><code class="code">-gameversion</code> emulation of 1.9, ultimate, final, and final2
+differences.
+</p></dd>
+<dt><code class="code">R-036</code></dt>
+<dd><p>Skills 1&ndash;5 with <code class="code">-nomonsters</code>, <code class="code">-fast</code>, <code class="code">-respawn</code>.
+</p></dd>
+<dt><code class="code">R-037</code></dt>
+<dd><p>Vanilla cheat codes.
+</p></dd>
+<dt><code class="code">R-038</code></dt>
+<dd><p>Per-tic <code class="code">World</code> checksum exposed to tests and tools.
+</p></dd>
+<dt><code class="code">R-039</code></dt>
+<dd><p>Headless simulation run with no window, GPU, or audio.
+</p></dd>
+<dt><code class="code">R-040</code></dt>
+<dd><p>Emulation of the spechit and intercepts overflows as Chocolate Doom
+does.  <em class="emph">Optional.</em>
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="M3">
+<div class="nav-panel">
+<p>
+Next: <a href="#M4" accesskey="n" rel="next">M4 &mdash; Sound and music</a>, Previous: <a href="#M2" accesskey="p" rel="prev">M2 &mdash; Deterministic simulation core</a>, Up: <a href="#Milestones" accesskey="u" rel="up">Milestones</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="M3-_002d_002d_002d-Classic-renderer-and-front-end"><span>11.4 M3 &mdash; Classic renderer and front end<a class="copiable-link" href="#M3-_002d_002d_002d-Classic-renderer-and-front-end"> &para;</a></span></h3>
+
+<dl class="table">
+<dt><code class="code">R-041</code></dt>
+<dd><p>Software renderer port drawing palette indices to a 320x200
+framebuffer.
+</p></dd>
+<dt><code class="code">R-042</code></dt>
+<dd><p>Colour-map lighting, light diminishing, fuzz, sky per game mode, masked
+textures.
+</p></dd>
+<dt><code class="code">R-043</code></dt>
+<dd><p>Vanilla render limits overflow into a logged, non-fatal fallback.
+</p></dd>
+<dt><code class="code">R-044</code></dt>
+<dd><p>wgpu presenter with <code class="code">PLAYPAL</code> expansion, palette flashes, and 4:3
+scaling.
+</p></dd>
+<dt><code class="code">R-045</code></dt>
+<dd><p><code class="code">softbuffer</code> presenter used when no GPU adapter is available.
+</p></dd>
+<dt><code class="code">R-046</code></dt>
+<dd><p>Status bar and HUD, with level names for Doom, Doom II, TNT, and
+Plutonia.
+</p></dd>
+<dt><code class="code">R-047</code></dt>
+<dd><p>Automap with follow, zoom, grid, and marks.
+</p></dd>
+<dt><code class="code">R-048</code></dt>
+<dd><p>Menus: new game, episode (Doom only), skill, options, load, save, quit
+with ENDOOM.
+</p></dd>
+<dt><code class="code">R-049</code></dt>
+<dd><p>Intermission: Doom animated maps and the Doom II background.
+</p></dd>
+<dt><code class="code">R-050</code></dt>
+<dd><p>Finales: episode texts, Doom II, TNT, and Plutonia text screens, cast
+call, bunny scroller, E4 ending.
+</p></dd>
+<dt><code class="code">R-051</code></dt>
+<dd><p>Title and attract loop per game mode.
+</p></dd>
+<dt><code class="code">R-052</code></dt>
+<dd><p>Keyboard and mouse input with bindings remappable in the configuration.
+</p></dd>
+<dt><code class="code">R-053</code></dt>
+<dd><p>TOML configuration and XDG file locations.
+</p></dd>
+<dt><code class="code">R-054</code></dt>
+<dd><p>No-IWAD screen explaining how to supply an IWAD, using the
+<code class="code">steelbore</code> theme.
+</p></dd>
+<dt><code class="code">R-055</code></dt>
+<dd><p>Headless render-to-PNG golden frames in CI.
+</p></dd>
+<dt><code class="code">R-056</code></dt>
+<dd><p>2x and 4x internal scale with banded parallel drawing.
+<em class="emph">Optional.</em>
+</p></dd>
+<dt><code class="code">R-057</code></dt>
+<dd><p>Uncapped frame rate with interpolation between tics.  <em class="emph">Optional.</em>
+</p></dd>
+<dt><code class="code">R-058</code></dt>
+<dd><p>Gamepad input.  <em class="emph">Optional.</em>
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="M4">
+<div class="nav-panel">
+<p>
+Next: <a href="#M5" accesskey="n" rel="next">M5 &mdash; Demos, saves and fidelity gate</a>, Previous: <a href="#M3" accesskey="p" rel="prev">M3 &mdash; Classic renderer and front end</a>, Up: <a href="#Milestones" accesskey="u" rel="up">Milestones</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="M4-_002d_002d_002d-Sound-and-music"><span>11.5 M4 &mdash; Sound and music<a class="copiable-link" href="#M4-_002d_002d_002d-Sound-and-music"> &para;</a></span></h3>
+
+<dl class="table">
+<dt><code class="code">R-059</code></dt>
+<dd><p>Audio output on a dedicated thread fed by a bounded lock-free queue
+that never blocks the tic.
+</p></dd>
+<dt><code class="code">R-060</code></dt>
+<dd><p>Sound effects with vanilla channel priority, attenuation, and stereo
+separation.
+</p></dd>
+<dt><code class="code">R-061</code></dt>
+<dd><p>MUS parser and sequencer.
+</p></dd>
+<dt><code class="code">R-062</code></dt>
+<dd><p>OPL music voiced from <code class="code">GENMIDI</code>, as the default backend.
+</p></dd>
+<dt><code class="code">R-063</code></dt>
+<dd><p>Silent degraded mode with a single warning when no audio device is
+present.
+</p></dd>
+<dt><code class="code">R-064</code></dt>
+<dd><p>Separate sound-effect and music volume settings.
+</p></dd>
+<dt><code class="code">R-065</code></dt>
+<dd><p>SoundFont MIDI backend.  <em class="emph">Optional.</em>
+</p></dd>
+<dt><code class="code">R-066</code></dt>
+<dd><p>PC speaker sound effects.  <em class="emph">Optional.</em>
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="M5">
+<div class="nav-panel">
+<p>
+Next: <a href="#M6" accesskey="n" rel="next">M6 &mdash; Release engineering v1.0</a>, Previous: <a href="#M4" accesskey="p" rel="prev">M4 &mdash; Sound and music</a>, Up: <a href="#Milestones" accesskey="u" rel="up">Milestones</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="M5-_002d_002d_002d-Demos_002c-saves-and-fidelity-gate"><span>11.6 M5 &mdash; Demos, saves and fidelity gate<a class="copiable-link" href="#M5-_002d_002d_002d-Demos_002c-saves-and-fidelity-gate"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-demo-compatibility"></a>
+<dl class="table">
+<dt><code class="code">R-067</code></dt>
+<dd><p>Vanilla <samp class="file">.lmp</samp> demo playback.
+</p></dd>
+<dt><code class="code">R-068</code></dt>
+<dd><p>Vanilla <samp class="file">.lmp</samp> demo recording.
+</p></dd>
+<dt><code class="code">R-069</code></dt>
+<dd><p><code class="code">-timedemo</code> reporting tics, wall time, and frame rate.
+</p></dd>
+<dt><code class="code">R-070</code></dt>
+<dd><p><code class="code">-statdump</code> output in Chocolate Doom format.
+</p></dd>
+<dt><code class="code">R-071</code></dt>
+<dd><p>Built-in demos of all eight IWADs stay in sync (CI for free IWADs,
+local run for commercial).
+</p></dd>
+<dt><code class="code">R-072</code></dt>
+<dd><p>CI differential check: <code class="code">-statdump</code> matches the Chocolate Doom
+oracle on the free-IWAD demo corpus.
+</p></dd>
+<dt><code class="code">R-073</code></dt>
+<dd><p><code class="code">phobos-tools demo diff</code> reports the first divergent tic.
+</p></dd>
+<dt><code class="code">R-074</code></dt>
+<dd><p>Native versioned savegame whose reload reproduces identical per-tic
+checksums.
+</p></dd>
+<dt><code class="code">R-075</code></dt>
+<dd><p>A corrupt or incompatible save is refused with a message and the game
+continues.
+</p></dd>
+<dt><code class="code">R-076</code></dt>
+<dd><p>Vanilla <samp class="file">.dsg</samp> savegame loading.  <em class="emph">Optional.</em>
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="M6">
+<div class="nav-panel">
+<p>
+Next: <a href="#M7" accesskey="n" rel="next">M7 &mdash; Vanilla modding extensions</a>, Previous: <a href="#M5" accesskey="p" rel="prev">M5 &mdash; Demos, saves and fidelity gate</a>, Up: <a href="#Milestones" accesskey="u" rel="up">Milestones</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="M6-_002d_002d_002d-Release-engineering-v1_002e0"><span>11.7 M6 &mdash; Release engineering v1.0<a class="copiable-link" href="#M6-_002d_002d_002d-Release-engineering-v1_002e0"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-packaging"></a>
+<dl class="table">
+<dt><code class="code">R-077</code></dt>
+<dd><p>SBOM generated from <samp class="file">Cargo.lock</samp> in the release run and shipped
+with a checksum.
+</p></dd>
+<dt><code class="code">R-078</code></dt>
+<dd><p>Texinfo manual <samp class="file">doc/phobos.texi</samp> building to Info, HTML, and PDF.
+</p></dd>
+<dt><code class="code">R-079</code></dt>
+<dd><p><samp class="file">packaging/guix.scm</samp>, <samp class="file">packaging/default.nix</samp>,
+<samp class="file">packaging/PKGBUILD</samp> with <code class="code">install-info</code>.
+</p></dd>
+<dt><code class="code">R-080</code></dt>
+<dd><p><samp class="option">--help</samp> and <samp class="option">--version</samp> per
+<code class="code">spacecraft-cli-standard</code> with §15 attribution.
+</p></dd>
+<dt><code class="code">R-081</code></dt>
+<dd><p>README compliance section with the tailoring register (§13).
+</p></dd>
+<dt><code class="code">R-082</code></dt>
+<dd><p>Release profile flags (LTO, <code class="code">codegen-units = 1</code>) noted in
+<samp class="file">Cargo.toml</samp>, benchmarked before and after.
+</p></dd>
+<dt><code class="code">R-083</code></dt>
+<dd><p>Installation verified from each package definition in a clean
+environment.
+</p></dd>
+<dt><code class="code">R-084</code></dt>
+<dd><p>Signed release tag.
+</p></dd>
+<dt><code class="code">R-085</code></dt>
+<dd><p>Limit-removing render mode.  <em class="emph">Optional.</em>
+</p></dd>
+<dt><code class="code">R-086</code></dt>
+<dd><p>macOS and Windows builds.  <em class="emph">Optional.</em>
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="M7">
+<div class="nav-panel">
+<p>
+Next: <a href="#M8" accesskey="n" rel="next">M8 &mdash; Enhanced GPU renderer</a>, Previous: <a href="#M6" accesskey="p" rel="prev">M6 &mdash; Release engineering v1.0</a>, Up: <a href="#Milestones" accesskey="u" rel="up">Milestones</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="M7-_002d_002d_002d-Vanilla-modding-extensions"><span>11.8 M7 &mdash; Vanilla modding extensions<a class="copiable-link" href="#M7-_002d_002d_002d-Vanilla-modding-extensions"> &para;</a></span></h3>
+
+<a class="index-entry-id" id="index-DeHackEd"></a>
+<dl class="table">
+<dt><code class="code">R-087</code></dt>
+<dd><p>DeHackEd patches loaded from <code class="code">-deh</code> files.
+</p></dd>
+<dt><code class="code">R-088</code></dt>
+<dd><p>DeHackEd patches loaded from a <code class="code">DEHACKED</code> lump.
+</p></dd>
+<dt><code class="code">R-089</code></dt>
+<dd><p>DeHackEd parser fuzz target.
+</p></dd>
+<dt><code class="code">R-090</code></dt>
+<dd><p>UMAPINFO support.  <em class="emph">Optional.</em>
+</p></dd>
+</dl>
+
+<hr>
+</div>
+<div class="section-level-extent" id="M8">
+<div class="nav-panel">
+<p>
+Previous: <a href="#M7" accesskey="p" rel="prev">M7 &mdash; Vanilla modding extensions</a>, Up: <a href="#Milestones" accesskey="u" rel="up">Milestones</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h3 class="section" id="M8-_002d_002d_002d-Enhanced-GPU-renderer"><span>11.9 M8 &mdash; Enhanced GPU renderer<a class="copiable-link" href="#M8-_002d_002d_002d-Enhanced-GPU-renderer"> &para;</a></span></h3>
+
+<dl class="table">
+<dt><code class="code">R-091</code></dt>
+<dd><p>wgpu renderer consuming the read-only <code class="code">RenderSnapshot</code>, selectable
+at run time.
+</p></dd>
+<dt><code class="code">R-092</code></dt>
+<dd><p>Static level geometry in GPU buffers and instanced sprites.
+</p></dd>
+<dt><code class="code">R-093</code></dt>
+<dd><p>Colour-map lighting reproduced in WGSL.
+</p></dd>
+<dt><code class="code">R-094</code></dt>
+<dd><p>Golden-scene parity check against the software renderer within a
+declared tolerance.
+</p></dd>
+<dt><code class="code">R-095</code></dt>
+<dd><p>Device loss returns to the software renderer without ending the game.
+</p></dd>
+<dt><code class="code">R-096</code></dt>
+<dd><p>Dynamic lights and post-processing.  <em class="emph">Optional.</em>
+</p></dd>
+<dt><code class="code">R-097</code></dt>
+<dd><p>Rust GPU shader path.  <em class="emph">Optional.</em>
+</p></dd>
+<dt><code class="code">R-098</code></dt>
+<dd><p>Ray-traced ambient occlusion and shadows.  <em class="emph">Optional.</em>
+</p></dd>
+<dt><code class="code">R-099</code></dt>
+<dd><p>WebGPU / WASM build.  <em class="emph">Optional.</em>
+</p></dd>
+</dl>
+
+<hr>
+</div>
+</div>
+<div class="chapter-level-extent" id="Risks">
+<div class="nav-panel">
+<p>
+Next: <a href="#Open-Questions" accesskey="n" rel="next">Open Questions</a>, Previous: <a href="#Milestones" accesskey="p" rel="prev">Milestones</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Risks-1"><span>12 Risks<a class="copiable-link" href="#Risks-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-risks"></a>
+<table class="multitable">
+<thead><tr><th width="30%">Risk</th><th width="10%">Impact</th><th width="12%">Likelihood</th><th width="48%">Mitigation</th></tr></thead>
+<tbody><tr><td width="30%">Demo desync from subtle order or overflow differences</td><td width="10%">High</td><td width="12%">High</td><td width="48%">Per-tic checksums, Chocolate Doom oracle, <code class="code">demo diff</code>
+first-divergence tool, transliteration that keeps call order.</td></tr>
+<tr><td width="30%">Thinker or link order lost when pointers become handles</td><td width="10%">High</td><td width="12%">Medium</td><td width="48%">Index-linked lists in the arena; golden traces on monster-heavy
+maps.</td></tr>
+<tr><td width="30%">Vanilla undefined behaviour (freed <code class="code">target</code>, overflows) is
+relied on by demos</td><td width="10%">Medium</td><td width="12%">Medium</td><td width="48%">Emulate the observable result explicitly; R-040 optional overflow
+emulation.</td></tr>
+<tr><td width="30%">Commercial IWADs absent from CI</td><td width="10%">Medium</td><td width="12%">Certain</td><td width="48%">Freedoom and shareware in CI; a scripted local acceptance run
+before each release.</td></tr>
+<tr><td width="30%">Young OPL crate</td><td width="10%">Medium</td><td width="12%">Medium</td><td width="48%">§24 audit; fallback is porting Nuked OPL3 in tree, keeping its
+LGPL-2.1-or-later notice (§4.2).</td></tr>
+<tr><td width="30%">wgpu API churn</td><td width="10%">Low</td><td width="12%">High</td><td width="48%">Presenter stays thin; <code class="code">softbuffer</code> fallback; versions pinned.</td></tr>
+<tr><td width="30%">Scope creep toward Boom or ZDoom</td><td width="10%">High</td><td width="12%">High</td><td width="48%">NG-1; DeHackEd is the only extension format.</td></tr>
+<tr><td width="30%">Trademark complaint</td><td width="10%">Medium</td><td width="12%">Low</td><td width="48%">Codename, no assets, no logos, disclaimer.</td></tr>
+</tbody>
+</table>
+
+<hr>
+</div>
+<div class="chapter-level-extent" id="Open-Questions">
+<div class="nav-panel">
+<p>
+Next: <a href="#References" accesskey="n" rel="next">References</a>, Previous: <a href="#Risks" accesskey="p" rel="prev">Risks</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="Open-Questions-1"><span>13 Open Questions<a class="copiable-link" href="#Open-Questions-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-open-questions"></a>
+<table class="multitable">
+<thead><tr><th width="10%">ID</th><th width="45%">Question</th><th width="45%">Recommendation</th></tr></thead>
+<tbody><tr><td width="10%">OQ-1</td><td width="45%">Approve codename Phobos?</td><td width="45%"><strong class="strong">Resolved 2026-10-27:</strong> approved by the maintainer.</td></tr>
+<tr><td width="10%">OQ-2</td><td width="45%">Are macOS and Windows required for v1.0?</td><td width="45%">Optional: winit and wgpu make them cheap, but CI cost and a
+Personal posture argue against requiring them.</td></tr>
+<tr><td width="10%">OQ-3</td><td width="45%">Which reference machine anchors the performance targets?</td><td width="45%">The maintainer&rsquo;s main Steelbore OS workstation, recorded with CPU,
+GPU, and RAM.</td></tr>
+<tr><td width="10%">OQ-4</td><td width="45%">May the port adapt Chocolate Doom code
+(GPL-2.0-or-later), or only follow its documented behaviour?</td><td width="45%">Allow it with file-level credit; the licences are compatible.</td></tr>
+<tr><td width="10%">OQ-5</td><td width="45%">Default music backend: OPL or SoundFont?</td><td width="45%">OPL (vanilla sound); SoundFont optional.</td></tr>
+<tr><td width="10%">OQ-6</td><td width="45%">Is vanilla <samp class="file">.dsg</samp> save loading worth the effort?</td><td width="45%">Keep it optional; the native format is required.</td></tr>
+</tbody>
+</table>
+
+<hr>
+</div>
+<div class="chapter-level-extent" id="References">
+<div class="nav-panel">
+<p>
+Next: <a href="#Index" accesskey="n" rel="next">Index</a>, Previous: <a href="#Open-Questions" accesskey="p" rel="prev">Open Questions</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="chapter" id="References-1"><span>14 References<a class="copiable-link" href="#References-1"> &para;</a></span></h2>
+
+<a class="index-entry-id" id="index-references"></a>
+<ul class="itemize mark-bullet">
+<li><cite class="cite">RustDoom</cite> PRD v1.0 (2026-07-23), <samp class="file">RustDoom.html</samp>.
+</li><li><cite class="cite">Doom-to-Rust Porting Reference</cite> v1.0 (2026-07-23),
+<samp class="file">doomrustport.texi</samp>.
+</li><li>id Software, <a class="uref" href="https://github.com/id-Software/DOOM">id-Software/DOOM</a>; <a class="uref" href="https://doomwiki.org/wiki/Doom_source_code">Doom source code history</a>.
+</li><li><a class="uref" href="https://github.com/chocolate-doom/chocolate-doom">Chocolate Doom</a>
+and its <a class="uref" href="https://github.com/chocolate-doom/statcheck">statcheck</a>
+demo-regression method.
+</li><li>Prior Rust art: <a class="uref" href="https://github.com/flukejones/room4doom">room4doom</a>, <a class="uref" href="https://github.com/Henrique194/iron-doom">iron-doom</a>,
+<a class="uref" href="https://github.com/cristicbz/rust-doom">rust-doom</a>.
+</li><li><a class="uref" href="https://freedoom.github.io/">Freedoom</a>.
+</li><li>The Steelbore Standard v2.14, §2, §3, §4, §9, §11, §17.5, §18.5, §19.
+</li></ul>
+
+<hr>
+</div>
+<div class="unnumbered-level-extent" id="Index">
+<div class="nav-panel">
+<p>
+Previous: <a href="#References" accesskey="p" rel="prev">References</a>, Up: <a href="#Top" accesskey="u" rel="up">Phobos Product Requirements</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Index" title="Index" rel="index">Index</a>]</p>
+</div>
+<h2 class="unnumbered" id="Index-1"><span>Index<a class="copiable-link" href="#Index-1"> &para;</a></span></h2>
+
+<div class="printindex cp-printindex">
+<table class="cp-letters-header-printindex"><tr><th>Jump to: &nbsp; </th><td><a class="summary-letter-printindex" href="#Index_cp_letter-A"><b>A</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-C"><b>C</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-D"><b>D</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-F"><b>F</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-G"><b>G</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-I"><b>I</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-M"><b>M</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-N"><b>N</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-O"><b>O</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-P"><b>P</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-R"><b>R</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-S"><b>S</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-T"><b>T</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-V"><b>V</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-W"><b>W</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-X"><b>X</b></a>
+ &nbsp; 
+</td></tr></table>
+<table class="cp-entries-printindex">
+<tr><td></td><th class="entries-header-printindex">Index Entry</th><th class="sections-header-printindex">Section</th></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-A">A</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Amdahl_0027s-law">Amdahl&rsquo;s law</a></td><td class="printindex-index-section"><a href="#Concurrency-Model">Concurrency Model</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-audio">audio</a></td><td class="printindex-index-section"><a href="#Audio">Audio</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-C">C</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-c2rust">c2rust</a></td><td class="printindex-index-section"><a href="#Porting-Strategy">Porting Strategy</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Chocolate-Doom">Chocolate Doom</a></td><td class="printindex-index-section"><a href="#Porting-Strategy">Porting Strategy</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-command-line">command line</a></td><td class="printindex-index-section"><a href="#Command-Line">Command Line</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-compliance">compliance</a></td><td class="printindex-index-section"><a href="#Compliance">Compliance</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-concurrency">concurrency</a></td><td class="printindex-index-section"><a href="#Concurrency-Model">Concurrency Model</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-configuration">configuration</a></td><td class="printindex-index-section"><a href="#Configuration">Configuration</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-crates">crates</a></td><td class="printindex-index-section"><a href="#Crate-Layout">Crate Layout</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-D">D</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-DeHackEd">DeHackEd</a></td><td class="printindex-index-section"><a href="#M7">M7</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-demo-compatibility">demo compatibility</a></td><td class="printindex-index-section"><a href="#M5">M5</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-demo-format">demo format</a></td><td class="printindex-index-section"><a href="#Data-Formats">Data Formats</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-determinism">determinism</a></td><td class="printindex-index-section"><a href="#Principles">Principles</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-doomgeneric">doomgeneric</a></td><td class="printindex-index-section"><a href="#Porting-Strategy">Porting Strategy</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-F">F</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-fixed_002dpoint">fixed-point</a></td><td class="printindex-index-section"><a href="#M2">M2</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Freedoom">Freedoom</a></td><td class="printindex-index-section"><a href="#Target-Games">Target Games</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-G">G</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-game-mode">game mode</a></td><td class="printindex-index-section"><a href="#Target-Games">Target Games</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-game-version">game version</a></td><td class="printindex-index-section"><a href="#Target-Games">Target Games</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-global-state">global state</a></td><td class="printindex-index-section"><a href="#State-Ownership">State Ownership</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-goals">goals</a></td><td class="printindex-index-section"><a href="#Goals">Goals</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-I">I</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-id-Tech-1">id Tech 1</a></td><td class="printindex-index-section"><a href="#Overview">Overview</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-IWAD">IWAD</a></td><td class="printindex-index-section"><a href="#Target-Games">Target Games</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-M">M</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-milestones">milestones</a></td><td class="printindex-index-section"><a href="#Milestones">Milestones</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-MVP">MVP</a></td><td class="printindex-index-section"><a href="#Overview">Overview</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-N">N</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-needs">needs</a></td><td class="printindex-index-section"><a href="#Needs">Needs</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-non_002dgoals">non-goals</a></td><td class="printindex-index-section"><a href="#Goals">Goals</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-O">O</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-open-questions">open questions</a></td><td class="printindex-index-section"><a href="#Open-Questions">Open Questions</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-OPL">OPL</a></td><td class="printindex-index-section"><a href="#Audio">Audio</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-overview">overview</a></td><td class="printindex-index-section"><a href="#Overview">Overview</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-P">P</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-P_005fRandom">P_Random</a></td><td class="printindex-index-section"><a href="#M2">M2</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-packaging">packaging</a></td><td class="printindex-index-section"><a href="#M6">M6</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-performance-targets">performance targets</a></td><td class="printindex-index-section"><a href="#Performance-Targets">Performance Targets</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-phobos_002dtools">phobos-tools</a></td><td class="printindex-index-section"><a href="#Command-Line">Command Line</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-porting-strategy">porting strategy</a></td><td class="printindex-index-section"><a href="#Porting-Strategy">Porting Strategy</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-principles">principles</a></td><td class="printindex-index-section"><a href="#Principles">Principles</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-privacy">privacy</a></td><td class="printindex-index-section"><a href="#Platform-and-Files">Platform and Files</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-progress-tracking">progress tracking</a></td><td class="printindex-index-section"><a href="#Milestones">Milestones</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-R">R</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-references">references</a></td><td class="printindex-index-section"><a href="#References">References</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-risks">risks</a></td><td class="printindex-index-section"><a href="#Risks">Risks</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-RustDoom">RustDoom</a></td><td class="printindex-index-section"><a href="#Sources-and-Changes">Sources and Changes</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-S">S</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-savegame">savegame</a></td><td class="printindex-index-section"><a href="#Data-Formats">Data Formats</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-software-renderer">software renderer</a></td><td class="printindex-index-section"><a href="#Rendering">Rendering</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-sources">sources</a></td><td class="printindex-index-section"><a href="#Sources-and-Changes">Sources and Changes</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-statcheck">statcheck</a></td><td class="printindex-index-section"><a href="#Verification">Verification</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-Steelbore-Standard">Steelbore Standard</a></td><td class="printindex-index-section"><a href="#Compliance">Compliance</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-T">T</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-thinkers">thinkers</a></td><td class="printindex-index-section"><a href="#State-Ownership">State Ownership</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-trademark">trademark</a></td><td class="printindex-index-section"><a href="#Overview">Overview</a></td></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-transliteration">transliteration</a></td><td class="printindex-index-section"><a href="#Porting-Strategy">Porting Strategy</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-V">V</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-verification">verification</a></td><td class="printindex-index-section"><a href="#Verification">Verification</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-W">W</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-wgpu">wgpu</a></td><td class="printindex-index-section"><a href="#Rendering">Rendering</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+<tr><th id="Index_cp_letter-X">X</th></tr>
+<tr><td></td><td class="printindex-index-entry"><a href="#index-XDG">XDG</a></td><td class="printindex-index-section"><a href="#Platform-and-Files">Platform and Files</a></td></tr>
+<tr><td colspan="3"><hr></td></tr>
+</table>
+<table class="cp-letters-footer-printindex"><tr><th>Jump to: &nbsp; </th><td><a class="summary-letter-printindex" href="#Index_cp_letter-A"><b>A</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-C"><b>C</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-D"><b>D</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-F"><b>F</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-G"><b>G</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-I"><b>I</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-M"><b>M</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-N"><b>N</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-O"><b>O</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-P"><b>P</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-R"><b>R</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-S"><b>S</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-T"><b>T</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-V"><b>V</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-W"><b>W</b></a>
+ &nbsp; 
+<a class="summary-letter-printindex" href="#Index_cp_letter-X"><b>X</b></a>
+ &nbsp; 
+</td></tr></table>
+</div>
+
+</div>
+</div>
+
+
+
+</body>
+</html>
