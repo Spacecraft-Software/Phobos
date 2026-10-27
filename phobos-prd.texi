@@ -813,7 +813,7 @@ CI runs @code{cargo fmt --check},
 @code{cargo clippy --all-targets --all-features --locked -- -D warnings},
 tests, doc tests, @code{cargo audit}, @code{cargo deny}.
 @item R-007
-Codename Phobos registered in @file{PROJECTS.md}, the §2.1 registry,
+Phobos registered in @file{PROJECTS.md}, the §15.1 subdomain table,
 and the §18.5 games registry.
 @item R-008
 ``Or later'' grant verified against the GPL source release headers and

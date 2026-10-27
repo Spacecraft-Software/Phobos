@@ -128,7 +128,7 @@ workspace, and the oracle runs a demo headless in CI.
 - [ ] P-011 Fixed-output Nix derivations for Freedoom (pinned release) and `doom1.wad`, by SHA-256 (R-012)
 - [ ] P-012 CI job proving the oracle runs a `doom1.wad` demo headless and writes a statdump (R-011)
 - [ ] P-013 GPL "or later" grant checked against the 1999 release headers; result in `NOTICE.md` (R-008)
-- [ ] P-014 Registry pull requests: `PROJECTS.md`, Standard §2.1 and §18.5 (Standard and Construct, same version) (R-007)
+- [ ] P-014 Registry pull requests: `PROJECTS.md`, Standard §15.1 and §18.5 (Standard and Construct, same version) (R-007)
 
 ## M1 — WAD and resource layer
 

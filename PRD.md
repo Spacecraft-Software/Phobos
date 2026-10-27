@@ -370,7 +370,7 @@ optimisation decisions. The reference machine is still to be chosen (OQ-3).
 - [ ] R-004 REUSE headers on every file; `reuse lint` gates CI
 - [ ] R-005 `.gitattributes` and `.editorconfig` per §6.5; CI rejects CR bytes
 - [ ] R-006 CI runs `cargo fmt --check`, `cargo clippy --all-targets --all-features --locked -- -D warnings`, tests, doc tests, `cargo audit`, `cargo deny`
-- [ ] R-007 Codename Phobos registered in `PROJECTS.md`, the §2.1 registry, and the §18.5 games registry
+- [ ] R-007 Phobos registered in `PROJECTS.md`, the §15.1 subdomain table, and the §18.5 games registry
 - [ ] R-008 "Or later" grant verified against the GPL source release headers and recorded in `NOTICE.md`
 - [ ] R-009 `CREDITS.md` listing id Software, Chocolate Doom, Freedoom, and prior Rust art consulted
 - [ ] R-010 `SECURITY.md` with reporting channel and support window
