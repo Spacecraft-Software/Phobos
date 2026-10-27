@@ -7,7 +7,7 @@ finished items stay ticked, and new items take new identifiers. Updated
 
 - [x] T-001 Decide whether the working directory `doom-rs/` is renamed to `phobos/` (renamed 2026-10-27)
 - [ ] T-002 Create the GitHub repository `Spacecraft-Software/Phobos` and protect `main`
-- [ ] T-003 Run `git init`, confirm SSH commit signing works, push an initial signed commit
+- [x] T-003 Run `git init`, confirm SSH commit signing works, push an initial signed commit
 - [ ] T-004 Move the source documents (`RustDoom.html`, `doomrustport.*`) to `doc/history/`
 - [ ] T-005 Move `phobos-prd.texi` and `phobos-prd.html` to `doc/`
 - [ ] T-006 Copy `LICENSE`, `LICENSES/`, `NOTICE.md`, `CONTRIBUTING.md` from `/spacecraft-software/license/`
@@ -25,9 +25,9 @@ finished items stay ticked, and new items take new identifiers. Updated
 - [ ] T-018 Write the CI workflow with every gate and the CR-byte check
 - [ ] T-019 Add the CI job that runs the oracle on `doom1.wad` DEMO1
 - [ ] T-020 Check the 1999 GPL release headers for the "or later" grant and record it in `NOTICE.md`
-- [ ] T-021 Open the `PROJECTS.md` pull request registering Phobos as a Category D game
-- [ ] T-022 Open the Standard pull request adding Phobos to the §2.1 and §18.5 registries
-- [ ] T-023 Open the matching Construct pull request for the `spacecraft-steelbore-standard` skill
+- [x] T-021 Open the `PROJECTS.md` pull request registering Phobos as a Category D game
+- [x] T-022 Open the Standard pull request adding Phobos to the §15.1 and §18.5 registries
+- [x] T-023 Open the matching Construct pull request for the `spacecraft-steelbore-standard` skill
 - [ ] T-024 List a free-IWAD demo corpus and check that its demos may be fetched in CI
 - [ ] T-025 Decide OQ-2: whether macOS and Windows are required for v1.0
 - [ ] T-026 Decide OQ-3 and record the reference machine's CPU, GPU, and RAM
