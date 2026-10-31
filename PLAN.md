@@ -61,13 +61,16 @@ M0 ─► M1 ─┬─► M2 (simulation) ────────────�
 
 ### Fidelity ladder
 
-Each rung is a statdump match against Chocolate Doom (R-011) before the next
-rung starts.
+Each rung is a per-tic trace match against Chocolate Doom (R-011, `doc/oracle.md`),
+plus a statdump match where the demo finishes a level, before the next rung
+starts. Rungs 1, 2 and 6 need IWADs CI cannot fetch; they run locally from
+`PHOBOS_IWAD_DIR` (no stable redistributable source for `doom1.wad` was found,
+2026-10-31).
 
 | Rung | Target | Proves |
 |------|--------|--------|
-| 1 | `doom1.wad` DEMO1 | Movement, collision, hitscan, the E1 monsters |
-| 2 | `doom1.wad` DEMO2, DEMO3 | Doors, lifts, specials, more of E1 |
+| 1 | `doom1.wad` DEMO1 (local) | Movement, collision, hitscan, the E1 monsters |
+| 2 | `doom1.wad` DEMO2, DEMO3 (local) | Doors, lifts, specials, more of E1 |
 | 3 | `freedoom1.wad` built-in demos, `-gameversion ultimate` | E2–E4 actors, Ultimate behaviour |
 | 4 | `freedoom2.wad` built-in demos | Doom II monsters, super shotgun, MAP specials |
 | 5 | Free-IWAD demo corpus (T-024) | Breadth |
@@ -115,18 +118,18 @@ Choices that keep dependencies out:
 Exit when a fresh clone passes CI with every gate active on an empty
 workspace, and the oracle runs a demo headless in CI.
 
-- [ ] P-001 `git init`; Cargo workspace (resolver 3) with all eleven crates as empty members (R-001)
-- [ ] P-002 `rust-toolchain.toml` pinned to stable with rustfmt and clippy; `fuzz/rust-toolchain.toml` on nightly (R-001)
-- [ ] P-003 `[workspace.lints]` plus per-crate `forbid(unsafe_code)`, float and clock bans in simulation crates (R-026)
-- [ ] P-004 `flake.nix` dev shell with toolchain, `cargo-deny`, `cargo-audit`, `reuse`, `chocolate-doom` (R-011)
-- [ ] P-005 Posture files copied from `/spacecraft-software/license/`: `LICENSE`, `LICENSES/`, `NOTICE.md`, `CONTRIBUTING.md`, `CREDITS.md`, `SECURITY.md` (R-002, R-009, R-010)
-- [ ] P-006 `README.md` with posture, game declaration, Category D, conformance claim (R-002)
-- [ ] P-007 `AGENTS.md` with build commands, simulation invariants, crate dependency rules; `CLAUDE.md` importing it (R-003)
-- [ ] P-008 SPDX headers, `REUSE.toml` for generated HTML, `.gitattributes`, `.editorconfig` (R-004, R-005)
-- [ ] P-009 `deny.toml`: GPL-3.0-compatible licence allow-list and bans that enforce the crate dependency rules (R-006)
-- [ ] P-010 CI workflow running every gate, plus a CR-byte check (R-005, R-006)
-- [ ] P-011 Fixed-output Nix derivations for Freedoom (pinned release) and `doom1.wad`, by SHA-256 (R-012)
-- [ ] P-012 CI job proving the oracle runs a `doom1.wad` demo headless and writes a statdump (R-011)
+- [x] P-001 `git init`; Cargo workspace (resolver 3) with all eleven crates as empty members (R-001)
+- [x] P-002 `rust-toolchain.toml` pinned to stable with rustfmt and clippy; `fuzz/rust-toolchain.toml` on nightly (R-001)
+- [x] P-003 `[workspace.lints]` plus per-crate `forbid(unsafe_code)`, float and clock bans in simulation crates (R-026)
+- [x] P-004 `flake.nix` dev shell with toolchain, `cargo-deny`, `cargo-audit`, `reuse`, `chocolate-doom` (R-011)
+- [x] P-005 Posture files copied from `/spacecraft-software/license/`: `LICENSE`, `LICENSES/`, `NOTICE.md`, `CONTRIBUTING.md`, `CREDITS.md`, `SECURITY.md` (R-002, R-009, R-010)
+- [x] P-006 `README.md` with posture, game declaration, Category D, conformance claim (R-002)
+- [x] P-007 `AGENTS.md` with build commands, simulation invariants, crate dependency rules; `CLAUDE.md` importing it (R-003)
+- [x] P-008 SPDX headers, `REUSE.toml` for generated HTML, `.gitattributes`, `.editorconfig` (R-004, R-005)
+- [x] P-009 `deny.toml`: GPL-3.0-compatible licence allow-list and bans that enforce the crate dependency rules (R-006)
+- [x] P-010 CI workflow running every gate, plus a CR-byte check (R-005, R-006)
+- [x] P-011 Freedoom pinned through `flake.lock` and verified against `tools/testdata.sha256`; `doom1.wad` local only (R-012)
+- [x] P-012 CI job proving the oracle runs a `doom1.wad` demo headless and writes a statdump (R-011)
 - [ ] P-013 GPL "or later" grant checked against the 1999 release headers; result in `NOTICE.md` (R-008)
 - [ ] P-014 Registry pull requests: `PROJECTS.md`, Standard §15.1 and §18.5 (Standard and Construct, same version) (R-007)
 
@@ -164,9 +167,10 @@ Exit at fidelity ladder rung 4: `freedoom2.wad` built-in demos match the oracle.
 - [ ] P-036 Vanilla cheat codes (R-037)
 - [ ] P-037 Per-tic FNV-1a `World` checksum (R-038)
 - [ ] P-038 Headless demo harness in `phobos-tools`: reads `.lmp`, writes statdump and checksum trace (R-039)
-- [ ] P-039 Fidelity ladder rungs 1–4 passing in CI (R-039; groundwork for R-072)
+- [ ] P-039 Fidelity ladder rungs 3–4 passing in CI, rungs 1–2 locally (R-039; groundwork for R-072)
 - [ ] P-040 Criterion tic benchmark on `freedoom2.wad` MAP30 as baseline (performance targets)
 - [ ] P-041 spechit and intercepts overflow emulation (R-040) (optional)
+- [ ] P-103 Test-only `-tictrace` patch for Chocolate Doom, applied by a Nix overlay, writing the per-tic trace of `doc/oracle.md` (R-011)
 
 ## M3 — Classic renderer and front end
 

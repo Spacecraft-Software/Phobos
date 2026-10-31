@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# The pinned release toolchain (PLAN.md, "Toolchain and dependency candidates").
+# CI installs the same version; it moves only in a reviewed change.
+[toolchain]
+channel = "1.97.1"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

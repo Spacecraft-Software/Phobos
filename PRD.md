@@ -364,18 +364,18 @@ optimisation decisions. The reference machine is still to be chosen (OQ-3).
 
 ## M0 — Foundation and compliance
 
-- [ ] R-001 Cargo workspace with `rust-toolchain.toml` and committed `Cargo.lock`
-- [ ] R-002 Posture files: `README.md` (posture, game declaration, Category D, conformance claim), `NOTICE.md`, `CONTRIBUTING.md`, `LICENSE`, `LICENSES/`
-- [ ] R-003 `AGENTS.md` and `CLAUDE.md` per §5.7
-- [ ] R-004 REUSE headers on every file; `reuse lint` gates CI
-- [ ] R-005 `.gitattributes` and `.editorconfig` per §6.5; CI rejects CR bytes
-- [ ] R-006 CI runs `cargo fmt --check`, `cargo clippy --all-targets --all-features --locked -- -D warnings`, tests, doc tests, `cargo audit`, `cargo deny`
+- [x] R-001 Cargo workspace with `rust-toolchain.toml` and committed `Cargo.lock`
+- [x] R-002 Posture files: `README.md` (posture, game declaration, Category D, conformance claim), `NOTICE.md`, `CONTRIBUTING.md`, `LICENSE`, `LICENSES/`
+- [x] R-003 `AGENTS.md` and `CLAUDE.md` per §5.7
+- [x] R-004 REUSE headers on every file; `reuse lint` gates CI
+- [x] R-005 `.gitattributes` and `.editorconfig` per §6.5; CI rejects CR bytes
+- [x] R-006 CI runs `cargo fmt --check`, `cargo clippy --all-targets --all-features --locked -- -D warnings`, tests, doc tests, `cargo audit`, `cargo deny`
 - [ ] R-007 Phobos registered in `PROJECTS.md`, the §15.1 subdomain table, and the §18.5 games registry
 - [ ] R-008 "Or later" grant verified against the GPL source release headers and recorded in `NOTICE.md`
-- [ ] R-009 `CREDITS.md` listing id Software, Chocolate Doom, Freedoom, and prior Rust art consulted
-- [ ] R-010 `SECURITY.md` with reporting channel and support window
-- [ ] R-011 Chocolate Doom oracle built reproducibly out of tree (Nix, pinned commit), used by CI only
-- [ ] R-012 CI fetches Freedoom and shareware `doom1.wad` by pinned SHA-256
+- [x] R-009 `CREDITS.md` listing id Software, Chocolate Doom, Freedoom, and prior Rust art consulted
+- [x] R-010 `SECURITY.md` with reporting channel and support window
+- [x] R-011 Chocolate Doom oracle built reproducibly out of tree (Nix, pinned commit), used by CI only
+- [x] R-012 CI uses Freedoom pinned by SHA-256; shareware `doom1.wad` is local only, like the commercial IWADs
 
 ## M1 — WAD and resource layer
 

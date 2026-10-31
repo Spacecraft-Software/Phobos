@@ -1,0 +1,128 @@
+# SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Phobos, the Cargo workspace (PRD.md, "Crate layout").
+#
+#   phobos-fixed   16.16 fixed point, binary angles, trig and random tables
+#   phobos-wad     WAD reader, IWAD identification, lump namespace
+#   phobos-data    map, graphics and sound lump decoders
+#   phobos-sim     the deterministic simulation (single-threaded by design)
+#   phobos-game    game flow: modes, missions, demos, saves, cheats
+#   phobos-render  the software renderer (reference look)
+#   phobos-ui      status bar, HUD, automap, menus, intermission, finales
+#   phobos-audio   mixer, MUS sequencer, OPL backend
+#   phobos-gpu     wgpu presenter, later the enhanced renderer
+#   phobos-app     the `phobos` executable
+#   phobos-tools   the `phobos-tools` inspection and CI executable
+#
+# Dependency direction is enforced in deny.toml ([bans] wrappers).
+
+[workspace]
+resolver = "3"
+members = [
+  "crates/phobos-fixed",
+  "crates/phobos-wad",
+  "crates/phobos-data",
+  "crates/phobos-sim",
+  "crates/phobos-game",
+  "crates/phobos-render",
+  "crates/phobos-ui",
+  "crates/phobos-audio",
+  "crates/phobos-gpu",
+  "crates/phobos-app",
+  "crates/phobos-tools",
+]
+# cargo-fuzz needs a nightly toolchain and its own lockfile.
+exclude = ["fuzz"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+# MSRV is the pinned toolchain (rust-toolchain.toml).
+rust-version = "1.97.1"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/Spacecraft-Software/Phobos"
+homepage = "https://Phobos.SpacecraftSoftware.org/"
+authors = ["Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>"]
+publish = false
+
+[workspace.dependencies]
+phobos-fixed = { path = "crates/phobos-fixed" }
+phobos-wad = { path = "crates/phobos-wad" }
+phobos-data = { path = "crates/phobos-data" }
+phobos-sim = { path = "crates/phobos-sim" }
+phobos-game = { path = "crates/phobos-game" }
+phobos-render = { path = "crates/phobos-render" }
+phobos-ui = { path = "crates/phobos-ui" }
+phobos-audio = { path = "crates/phobos-audio" }
+phobos-gpu = { path = "crates/phobos-gpu" }
+
+[workspace.lints.rust]
+# Standard §3.1 and PRD goal G3: no unsafe code anywhere in the workspace.
+unsafe_code = "forbid"
+ambiguous_negative_literals = "warn"
+missing_debug_implementations = "warn"
+missing_docs = "warn"
+redundant_imports = "warn"
+redundant_lifetimes = "warn"
+trivial_numeric_casts = "warn"
+unsafe_op_in_unsafe_fn = "warn"
+unused_lifetimes = "warn"
+
+[workspace.lints.clippy]
+cargo = { level = "warn", priority = -1 }
+# Windowing and GPU crates bring duplicate transitive versions no manifest here
+# can unify; cargo-deny ([bans] multiple-versions = "warn") keeps them visible.
+multiple_crate_versions = "allow"
+complexity = { level = "warn", priority = -1 }
+correctness = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+perf = { level = "warn", priority = -1 }
+style = { level = "warn", priority = -1 }
+suspicious = { level = "warn", priority = -1 }
+# No unwrap, expect or panic on fallible production paths (M-PANIC-IS-STOP);
+# clippy.toml allows them in tests.
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+# Restriction-group lints (microsoft-rust-guidelines M-STATIC-VERIFICATION).
+allow_attributes_without_reason = "warn"
+as_pointer_underscore = "warn"
+assertions_on_result_states = "warn"
+clone_on_ref_ptr = "warn"
+deref_by_slicing = "warn"
+disallowed_script_idents = "warn"
+empty_drop = "warn"
+empty_enum_variants_with_brackets = "warn"
+empty_structs_with_brackets = "warn"
+fn_to_numeric_cast_any = "warn"
+if_then_some_else_none = "warn"
+map_err_ignore = "warn"
+redundant_type_annotations = "warn"
+renamed_function_params = "warn"
+semicolon_outside_block = "warn"
+undocumented_unsafe_blocks = "warn"
+unnecessary_safety_comment = "warn"
+unnecessary_safety_doc = "warn"
+unneeded_field_pattern = "warn"
+unused_result_ok = "warn"
+literal_string_with_formatting_args = "allow"
+
+# Standard §3.2: every applied or disabled flag is noted here.
+#
+# Applied:  lto = "fat" and codegen-units = 1 (whole-program optimisation).
+# Disabled: -C target-cpu=native. Release binaries are packaged for other
+#           machines (Standard §5.5), so they target the baseline CPU; local
+#           builds may set RUSTFLAGS themselves.
+# Disabled: PGO, until M6 (P-084) measures it with -timedemo.
+[profile.release]
+lto = "fat"
+codegen-units = 1
+
+# Overflow checks stay on in dev and test builds so an accidental overflow in
+# game logic fails loudly; vanilla's intended wrap-around uses wrapping_*.
+[profile.dev]
+overflow-checks = true
+
+[profile.test]
+overflow-checks = true

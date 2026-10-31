@@ -8,23 +8,23 @@ finished items stay ticked, and new items take new identifiers. Updated
 - [x] T-001 Decide whether the working directory `doom-rs/` is renamed to `phobos/` (renamed 2026-10-27)
 - [ ] T-002 Create the GitHub repository `Spacecraft-Software/Phobos` and protect `main`
 - [x] T-003 Run `git init`, confirm SSH commit signing works, push an initial signed commit
-- [ ] T-004 Move the source documents (`RustDoom.html`, `doomrustport.*`) to `doc/history/`
-- [ ] T-005 Move `phobos-prd.texi` and `phobos-prd.html` to `doc/`
-- [ ] T-006 Copy `LICENSE`, `LICENSES/`, `NOTICE.md`, `CONTRIBUTING.md` from `/spacecraft-software/license/`
-- [ ] T-007 Write `README.md` with the posture section, game declaration, Category D, and conformance claim
-- [ ] T-008 Write `CREDITS.md` and `SECURITY.md`
-- [ ] T-009 Write `AGENTS.md` and a `CLAUDE.md` that imports it
-- [ ] T-010 Add `.gitattributes`, `.editorconfig`, `REUSE.toml`; make `reuse lint` pass
-- [ ] T-011 Create the Cargo workspace with the eleven empty crates
-- [ ] T-012 Add `rust-toolchain.toml` and `fuzz/rust-toolchain.toml`
-- [ ] T-013 Add `[workspace.lints]`, per-crate `forbid(unsafe_code)`, and the `clippy.toml` bans
-- [ ] T-014 Write `flake.nix` with the dev shell
-- [ ] T-015 Add `chocolate-doom` to the flake and find the flags for a headless statdump run
-- [ ] T-016 Add fixed-output derivations for Freedoom and `doom1.wad` with SHA-256 pins
-- [ ] T-017 Write `deny.toml` with the licence allow-list and crate dependency bans
-- [ ] T-018 Write the CI workflow with every gate and the CR-byte check
-- [ ] T-019 Add the CI job that runs the oracle on `doom1.wad` DEMO1
-- [ ] T-020 Check the 1999 GPL release headers for the "or later" grant and record it in `NOTICE.md`
+- [x] T-004 Move the source documents (`RustDoom.html`, `doomrustport.*`) to `doc/history/`
+- [x] T-005 Move `phobos-prd.texi` and `phobos-prd.html` to `doc/`
+- [x] T-006 Copy `LICENSE`, `LICENSES/`, `NOTICE.md`, `CONTRIBUTING.md` from `/spacecraft-software/license/`
+- [x] T-007 Write `README.md` with the posture section, game declaration, Category D, and conformance claim
+- [x] T-008 Write `CREDITS.md` and `SECURITY.md`
+- [x] T-009 Write `AGENTS.md` and a `CLAUDE.md` that imports it
+- [x] T-010 Add `.gitattributes`, `.editorconfig`, `REUSE.toml`; make `reuse lint` pass
+- [x] T-011 Create the Cargo workspace with the eleven empty crates
+- [x] T-012 Add `rust-toolchain.toml` and `fuzz/rust-toolchain.toml`
+- [x] T-013 Add `[workspace.lints]`, per-crate `forbid(unsafe_code)`, and the `clippy.toml` bans
+- [x] T-014 Write `flake.nix` with the dev shell
+- [x] T-015 Add `chocolate-doom` to the flake and find the flags for a headless statdump run
+- [x] T-016 Pin Freedoom through the flake with SHA-256 checks (`doom1.wad`: no stable source, local only)
+- [x] T-017 Write `deny.toml` with the licence allow-list and crate dependency bans
+- [x] T-018 Write the CI workflow with every gate and the CR-byte check
+- [x] T-019 Add the CI job that runs the oracle on `freedoom1.wad` DEMO1 (`doom1.wad` is local only)
+- [x] T-020 Check the 1999 GPL release headers for the "or later" grant and record it in `NOTICE.md` (recorded; primary source not reachable, ruling open)
 - [x] T-021 Open the `PROJECTS.md` pull request registering Phobos as a Category D game
 - [x] T-022 Open the Standard pull request adding Phobos to the §15.1 and §18.5 registries
 - [x] T-023 Open the matching Construct pull request for the `spacecraft-steelbore-standard` skill
