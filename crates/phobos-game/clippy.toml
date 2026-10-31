@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Determinism bans for a simulation crate (PLAN.md, "Simulation invariants").
+# Clippy reads the nearest clippy.toml, so this file also repeats the
+# workspace-wide settings from the root clippy.toml.
+
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true
+
+disallowed-types = [
+  { path = "std::time::Instant", reason = "the simulation never reads a clock; time is the tic count" },
+  { path = "std::time::SystemTime", reason = "the simulation never reads a clock; time is the tic count" },
+]
+disallowed-methods = [
+  { path = "std::time::Instant::now", reason = "the simulation never reads a clock; time is the tic count" },
+  { path = "std::time::SystemTime::now", reason = "the simulation never reads a clock; time is the tic count" },
+]

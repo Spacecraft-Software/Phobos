@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+/target/
+/fuzz/target/
+/fuzz/corpus/
+/fuzz/artifacts/
+/result
+/result-*
+# Game data is never committed (AGENTS.md, "Test data").
+*.wad
+*.WAD
+# Texinfo build outputs.
+*.info
+*.pdf

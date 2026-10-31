@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# cargo-fuzz needs nightly (-Z sanitizer). This file applies only inside fuzz/,
+# so the workspace itself stays on the pinned stable toolchain.
+[toolchain]
+channel = "nightly"
+profile = "minimal"

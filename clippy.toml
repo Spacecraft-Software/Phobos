@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Workspace-wide clippy settings. The simulation crates (phobos-fixed,
+# phobos-sim, phobos-game) carry their own clippy.toml, which repeats these
+# lines and adds the clock bans.
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true

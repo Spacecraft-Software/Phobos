@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Standard §6.5: LF line endings in every text file.
+* text=auto eol=lf
+*.wad binary
+*.lmp binary
+*.png binary
