@@ -66,7 +66,11 @@ Parts of Phobos are transliterated from the id Software Doom source
 `Copyright (C) 1993-1996 id Software, Inc.` and are marked
 `GPL-2.0-or-later` in their SPDX header (Standard §4.2).
 
-**Status of the "or later" grant (PLAN.md P-013): open, checked 2026-10-31.**
+**Status of the "or later" grant (PLAN.md P-013): ruled 2026-11-01.** The
+maintainer relies on the 1999-10-03 re-release under GPL-2.0-or-later, as
+Chocolate Doom and the other GPL ports do. Derived files are marked
+`GPL-2.0-or-later`; Phobos as a whole is `GPL-3.0-or-later`. The evidence
+checked on 2026-10-31:
 
 | Source | What it states |
 |--------|----------------|
@@ -75,9 +79,8 @@ Parts of Phobos are transliterated from the id Software Doom source
 | Wikipedia, *Doom engine*, citing the idgames entry "Doom source code, under the GNU GPL" | Re-released 1999-10-03 under "GNU General Public License v2.0 or later" |
 | Chocolate Doom (`src/doom/*.c`) | id-derived files carry "either version 2 of the License, or (at your option) any later version" |
 
-The 1999 GPL archive itself was not reachable for a primary check. Until the
-maintainer rules on this, no id-derived code is committed (the first such code
-is planned for M2).
+The 1999 GPL archive itself was not reachable for a primary check; the ruling
+rests on the secondary sources above.
 
 ## Contributions, Suggestions, and Forks
 

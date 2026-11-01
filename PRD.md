@@ -371,7 +371,7 @@ optimisation decisions. The reference machine is still to be chosen (OQ-3).
 - [x] R-005 `.gitattributes` and `.editorconfig` per §6.5; CI rejects CR bytes
 - [x] R-006 CI runs `cargo fmt --check`, `cargo clippy --all-targets --all-features --locked -- -D warnings`, tests, doc tests, `cargo audit`, `cargo deny`
 - [ ] R-007 Phobos registered in `PROJECTS.md`, the §15.1 subdomain table, and the §18.5 games registry
-- [ ] R-008 "Or later" grant verified against the GPL source release headers and recorded in `NOTICE.md`
+- [x] R-008 "Or later" grant verified against the GPL source release headers and recorded in `NOTICE.md`
 - [x] R-009 `CREDITS.md` listing id Software, Chocolate Doom, Freedoom, and prior Rust art consulted
 - [x] R-010 `SECURITY.md` with reporting channel and support window
 - [x] R-011 Chocolate Doom oracle built reproducibly out of tree (Nix, pinned commit), used by CI only
@@ -379,15 +379,15 @@ optimisation decisions. The reference machine is still to be chosen (OQ-3).
 
 ## M1 — WAD and resource layer
 
-- [ ] R-013 WAD reader with checked bounds; malformed input yields a typed error and never panics
-- [ ] R-014 IWAD identification for all eight target IWADs by lump signature
-- [ ] R-015 IWAD search in the documented order
-- [ ] R-016 PWAD loading with vanilla `-file` override semantics
-- [ ] R-017 Map lumps decoded: THINGS, LINEDEFS, SIDEDEFS, VERTEXES, SEGS, SSECTORS, NODES, SECTORS, REJECT, BLOCKMAP
-- [ ] R-018 Graphics decoded: PLAYPAL, COLORMAP, PNAMES, TEXTURE1/2, patches, flats, sprites, ENDOOM
-- [ ] R-019 Sound lumps decoded: DS*, DP*, D_* (MUS), GENMIDI
-- [ ] R-020 Fuzz targets for WAD, map, patch, and texture decoding
-- [ ] R-021 `phobos-tools wad ls` and `wad identify` with `--json`
+- [x] R-013 WAD reader with checked bounds; malformed input yields a typed error and never panics
+- [x] R-014 IWAD identification for all eight target IWADs, by map lumps and file name as Chocolate Doom does it
+- [x] R-015 IWAD search in the documented order
+- [x] R-016 PWAD loading with vanilla `-file` override semantics
+- [x] R-017 Map lumps decoded: THINGS, LINEDEFS, SIDEDEFS, VERTEXES, SEGS, SSECTORS, NODES, SECTORS, REJECT, BLOCKMAP
+- [x] R-018 Graphics decoded: PLAYPAL, COLORMAP, PNAMES, TEXTURE1/2, patches, flats, sprites, ENDOOM
+- [x] R-019 Sound lumps decoded: DS*, DP*, D_* (MUS), GENMIDI
+- [x] R-020 Fuzz targets for WAD, map, patch, and texture decoding
+- [x] R-021 `phobos-tools wad ls` and `wad identify` with `--json`
 - [ ] R-022 PWAD sprite and flat merging (`-merge`) (optional)
 
 ## M2 — Deterministic simulation core

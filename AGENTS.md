@@ -55,9 +55,9 @@ tools/oracle-smoke.sh       # from `nix develop`; needs Chocolate Doom and Freed
   `anyhow` with context. Error types are `Send + Sync + 'static`.
 - **Transliterated code.** A file ported from the id source names its C
   source file in its module doc, keeps the original function order, and keeps
-  `Copyright (C) 1993-1996 id Software, Inc.` in its SPDX header. **No such
-  file may be committed until `NOTICE.md` records the maintainer's ruling on
-  the licence grant (P-013).**
+  `Copyright (C) 1993-1996 id Software, Inc.` in its SPDX copyright line and
+  declares the licence `GPL-2.0-or-later` in its SPDX licence line (the
+  maintainer's ruling of 2026-11-01, recorded in `NOTICE.md`).
 - **No network access** in any Phobos build (Standard §9).
 
 ## Test data

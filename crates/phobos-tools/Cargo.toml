@@ -19,3 +19,8 @@ path = "src/main.rs"
 
 [lints]
 workspace = true
+
+[dependencies]
+phobos-wad.workspace = true
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"

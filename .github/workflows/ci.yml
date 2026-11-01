@@ -7,6 +7,7 @@
 #   audit     cargo-deny (licences, bans incl. crate direction), cargo-audit
 #   posture   REUSE lint, the §6.5 CR-byte check on the index
 #   oracle    test data checksums, Chocolate Doom headless smoke run
+#   fuzz      every cargo-fuzz target for 60 s on nightly (PLAN.md P-021)
 
 name: ci
 
@@ -32,6 +33,12 @@ jobs:
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           components: rustfmt, clippy
+      - uses: cachix/install-nix-action@v31
+      # The integration tests read real IWAD resources; without Freedoom they
+      # skip, so CI fetches it and refuses to run the tests without it.
+      - name: Freedoom from the flake
+        run: echo "PHOBOS_FREEDOOM_DIR=$(nix build --no-link --print-out-paths .#freedoom)/share/games/doom" >> "$GITHUB_ENV"
+      - run: test -f "$PHOBOS_FREEDOOM_DIR/freedoom2.wad"
       - run: cargo fmt --all --check
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - run: cargo test --workspace --locked
@@ -72,3 +79,31 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - run: nix develop --command tools/testdata-check.sh
       - run: nix develop --command tools/oracle-smoke.sh
+
+  fuzz:
+    name: fuzz (60 s per target)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+      # Seeds cut from Freedoom's lumps, so libFuzzer starts from valid inputs.
+      - name: seed corpora from Freedoom
+        run: |
+          dir="$(nix build --no-link --print-out-paths .#freedoom)/share/games/doom"
+          cargo run --locked -p phobos-wad --example fuzz_seeds -- "$dir" fuzz/corpus
+      - uses: dtolnay/rust-toolchain@nightly
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-fuzz
+      # -max_len covers the largest seed (a 427 KB map); the default 4096
+      # bytes cannot even hold a valid GENMIDI bank.
+      - name: run every target
+        working-directory: fuzz
+        run: |
+          for target in $(cargo fuzz list); do
+            cargo fuzz run -O "$target" "corpus/$target" -- \
+              -max_total_time=60 -max_len=524288 -rss_limit_mb=2048
+          done

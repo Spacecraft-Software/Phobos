@@ -130,7 +130,7 @@ workspace, and the oracle runs a demo headless in CI.
 - [x] P-010 CI workflow running every gate, plus a CR-byte check (R-005, R-006)
 - [x] P-011 Freedoom pinned through `flake.lock` and verified against `tools/testdata.sha256`; `doom1.wad` local only (R-012)
 - [x] P-012 CI job proving the oracle runs a `doom1.wad` demo headless and writes a statdump (R-011)
-- [ ] P-013 GPL "or later" grant checked against the 1999 release headers; result in `NOTICE.md` (R-008)
+- [x] P-013 GPL "or later" grant checked against the 1999 release headers; result in `NOTICE.md` (R-008)
 - [ ] P-014 Registry pull requests: `PROJECTS.md`, Standard §15.1 and §18.5 (Standard and Construct, same version) (R-007)
 
 ## M1 — WAD and resource layer
@@ -138,15 +138,15 @@ workspace, and the oracle runs a demo headless in CI.
 Exit when all eight IWADs are identified, every lump of the free IWADs
 decodes, and fuzzing has run clean for its time box.
 
-- [ ] P-015 `phobos-wad`: header and directory parsing with checked arithmetic and a canonical `WadError` (R-013)
-- [ ] P-016 Lump namespace: ordered WAD stack, last-wins lookup, marker ranges (R-016)
-- [ ] P-017 IWAD identification table and search order (R-014, R-015)
-- [ ] P-018 `phobos-data` map decoding into typed arrays, with every cross-index validated (R-017)
-- [ ] P-019 Graphics decoding: palette, colour maps, patch posts, flats, PNAMES and TEXTURE definitions, ENDOOM (R-018)
-- [ ] P-020 Sound decoding: DMX sample headers, MUS headers, GENMIDI banks (R-019)
-- [ ] P-021 Fuzz targets for WAD directory, map, patch, and texture decoding, seeded from Freedoom (R-020)
-- [ ] P-022 Criterion benchmark for full IWAD load and decode as the first baseline (performance targets)
-- [ ] P-023 `phobos-tools wad ls` and `wad identify` with `--json` (R-021)
+- [x] P-015 `phobos-wad`: header and directory parsing with checked arithmetic and a canonical `WadError` (R-013)
+- [x] P-016 Lump namespace: ordered WAD stack, last-wins lookup, marker ranges (R-016)
+- [x] P-017 IWAD identification table and search order (R-014, R-015)
+- [x] P-018 `phobos-data` map decoding into typed arrays, with every cross-index validated (R-017)
+- [x] P-019 Graphics decoding: palette, colour maps, patch posts, flats, PNAMES and TEXTURE definitions, ENDOOM (R-018)
+- [x] P-020 Sound decoding: DMX sample headers, MUS headers, GENMIDI banks (R-019)
+- [x] P-021 Fuzz targets for WAD directory, map, patch, and texture decoding, seeded from Freedoom (R-020)
+- [x] P-022 Criterion benchmark for full IWAD load and decode as the first baseline (performance targets)
+- [x] P-023 `phobos-tools wad ls` and `wad identify` with `--json` (R-021)
 - [ ] P-024 PWAD sprite and flat merging (R-022) (optional)
 
 ## M2 — Deterministic simulation core
@@ -213,6 +213,7 @@ no audio device completes silently with one warning.
 - [ ] P-069 Sound-effect and music volume in menu and configuration (R-064)
 - [ ] P-070 SoundFont MIDI backend (R-065) (optional)
 - [ ] P-071 PC speaker sound effects (R-066) (optional)
+- [ ] P-104 MIDI music lumps played through the same OPL backend; Freedoom ships MIDI, not MUS (R-062)
 
 ## M5 — Demos, saves and fidelity gate
 
