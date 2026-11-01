@@ -18,3 +18,8 @@ workspace = true
 
 [dev-dependencies]
 criterion = { version = "0.8.2", default-features = false, features = ["cargo_bench_support"] }
+phobos-data = { path = "../phobos-data" }
+
+[[bench]]
+name = "load"
+harness = false

@@ -4,7 +4,7 @@ version = 1
 
 # Files that cannot carry inline SPDX tags.
 [[annotations]]
-path = ["LICENSE", "Cargo.lock", "flake.lock", "tools/testdata.sha256"]
+path = ["LICENSE", "Cargo.lock", "fuzz/Cargo.lock", "flake.lock", "tools/testdata.sha256"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>"
 SPDX-License-Identifier = "GPL-3.0-or-later"

@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 Mohamed Hammad <Mohamed.Hammad@SpacecraftSoftware.org>
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# cargo-fuzz targets (PLAN.md P-021). Its own workspace and lockfile, built on
+# the nightly toolchain pinned by fuzz/rust-toolchain.toml:
+#   cargo fuzz run wad_directory -- -max_total_time=60
+
+[package]
+name = "phobos-fuzz"
+version = "0.0.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+phobos-wad = { path = "../crates/phobos-wad" }
+phobos-data = { path = "../crates/phobos-data" }
+
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "wad_directory"
+path = "fuzz_targets/wad_directory.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "map_decode"
+path = "fuzz_targets/map_decode.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "graphics_decode"
+path = "fuzz_targets/graphics_decode.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "sound_decode"
+path = "fuzz_targets/sound_decode.rs"
+test = false
+doc = false
+bench = false

@@ -33,9 +33,9 @@ finished items stay ticked, and new items take new identifiers. Updated
 - [ ] T-026 Decide OQ-3 and record the reference machine's CPU, GPU, and RAM
 - [ ] T-027 Decide OQ-4: whether Chocolate Doom code may be adapted
 - [ ] T-028 Decide OQ-5 and OQ-6: default music backend and vanilla save loading
-- [ ] T-029 Write `WadError` and the WAD header and directory parser with unit tests
-- [ ] T-030 Write the lump namespace with last-wins lookup and marker ranges
-- [ ] T-031 Collect lump signatures for the eight target IWADs and write the identification table
-- [ ] T-032 Add the first fuzz target for the WAD directory parser
-- [ ] T-033 Add `phobos-tools wad ls --json`
+- [x] T-029 Write `WadError` and the WAD header and directory parser with unit tests
+- [x] T-030 Write the lump namespace with last-wins lookup and marker ranges
+- [x] T-031 Collect lump signatures for the eight target IWADs and write the identification table
+- [x] T-032 Add the first fuzz target for the WAD directory parser
+- [x] T-033 Add `phobos-tools wad ls --json`
 - [ ] T-034 Tick the finished `P-` and `R-` items and refresh this list at the M1 exit

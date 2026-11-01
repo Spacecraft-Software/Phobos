@@ -276,6 +276,7 @@ name = "phobos-wad"
 version = "0.0.0"
 dependencies = [
  "criterion",
+ "phobos-data",
 ]
 
 [[package]]

@@ -7,6 +7,7 @@
 #   audit     cargo-deny (licences, bans incl. crate direction), cargo-audit
 #   posture   REUSE lint, the §6.5 CR-byte check on the index
 #   oracle    test data checksums, Chocolate Doom headless smoke run
+#   fuzz      every cargo-fuzz target for 60 s on nightly (PLAN.md P-021)
 
 name: ci
 
@@ -72,3 +73,19 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - run: nix develop --command tools/testdata-check.sh
       - run: nix develop --command tools/oracle-smoke.sh
+
+  fuzz:
+    name: fuzz (60 s per target)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-fuzz
+      - name: run every target
+        working-directory: fuzz
+        run: |
+          for target in $(cargo fuzz list); do
+            cargo fuzz run -O "$target" -- -max_total_time=60 -rss_limit_mb=2048
+          done
