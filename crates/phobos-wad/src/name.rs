@@ -50,9 +50,16 @@ impl LumpName {
 
 impl fmt::Display for LumpName {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        // Raw WAD names may contain non-ASCII bytes; show those as Latin-1.
+        // Names come from untrusted WADs: a raw control byte would reach the
+        // terminal (an escape sequence, a newline splitting a row). Bytes
+        // outside printable ASCII are shown as `\xNN`. A backslash stays
+        // literal, because real sprite names use it (the Arch-vile's `VILE\1`).
         for &byte in self.as_bytes() {
-            f.write_char(char::from(byte))?;
+            if byte.is_ascii_graphic() {
+                f.write_char(char::from(byte))?;
+            } else {
+                write!(f, "\\x{byte:02X}")?;
+            }
         }
         Ok(())
     }
@@ -61,6 +68,13 @@ impl fmt::Display for LumpName {
 #[cfg(test)]
 mod tests {
     use super::LumpName;
+
+    #[test]
+    fn display_escapes_control_and_non_ascii_bytes() {
+        let name = LumpName::from_raw(*b"\x1b[2J\nAB\xE9");
+        assert_eq!(name.to_string(), "\\x1B[2J\\x0AAB\\xE9");
+        assert_eq!(LumpName::from_raw(*b"VILE\\1\0\0").to_string(), "VILE\\1");
+    }
 
     #[test]
     fn validates_and_normalizes_names() {
