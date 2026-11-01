@@ -371,7 +371,7 @@ optimisation decisions. The reference machine is still to be chosen (OQ-3).
 - [x] R-005 `.gitattributes` and `.editorconfig` per §6.5; CI rejects CR bytes
 - [x] R-006 CI runs `cargo fmt --check`, `cargo clippy --all-targets --all-features --locked -- -D warnings`, tests, doc tests, `cargo audit`, `cargo deny`
 - [ ] R-007 Phobos registered in `PROJECTS.md`, the §15.1 subdomain table, and the §18.5 games registry
-- [ ] R-008 "Or later" grant verified against the GPL source release headers and recorded in `NOTICE.md`
+- [x] R-008 "Or later" grant verified against the GPL source release headers and recorded in `NOTICE.md`
 - [x] R-009 `CREDITS.md` listing id Software, Chocolate Doom, Freedoom, and prior Rust art consulted
 - [x] R-010 `SECURITY.md` with reporting channel and support window
 - [x] R-011 Chocolate Doom oracle built reproducibly out of tree (Nix, pinned commit), used by CI only

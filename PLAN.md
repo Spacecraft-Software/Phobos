@@ -130,7 +130,7 @@ workspace, and the oracle runs a demo headless in CI.
 - [x] P-010 CI workflow running every gate, plus a CR-byte check (R-005, R-006)
 - [x] P-011 Freedoom pinned through `flake.lock` and verified against `tools/testdata.sha256`; `doom1.wad` local only (R-012)
 - [x] P-012 CI job proving the oracle runs a `doom1.wad` demo headless and writes a statdump (R-011)
-- [ ] P-013 GPL "or later" grant checked against the 1999 release headers; result in `NOTICE.md` (R-008)
+- [x] P-013 GPL "or later" grant checked against the 1999 release headers; result in `NOTICE.md` (R-008)
 - [ ] P-014 Registry pull requests: `PROJECTS.md`, Standard §15.1 and §18.5 (Standard and Construct, same version) (R-007)
 
 ## M1 — WAD and resource layer
